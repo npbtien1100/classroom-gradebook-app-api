@@ -29,8 +29,14 @@ Class.init(
 
 exports.createClass = async (req) => {
   const { className, classSection, subject, room } = req.body;
+  console.log(req.body);
   try {
-    await Class.create({ className, classSection, subject, room });
+    await Class.create({
+      className,
+      classSection,
+      subject,
+      room,
+    });
     return { message: "Create class successfully!" };
   } catch (error) {
     console.error(error);
@@ -53,7 +59,10 @@ exports.getOneClassByID = async (classID, arrayAttributes) => {
 exports.getAllClasses = async (arrayAttributes, options) => {
   try {
     const { orderOption } = options;
-    const allClasses = await Class.findAll({ attributes: arrayAttributes, order: orderOption });
+    const allClasses = await Class.findAll({
+      attributes: arrayAttributes,
+      order: orderOption,
+    });
     return allClasses;
   } catch (error) {
     console.error(error);
