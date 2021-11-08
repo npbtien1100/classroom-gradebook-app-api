@@ -7,12 +7,12 @@ const cors = require("cors");
 const indexRouter = require("./routes/index");
 const classesRouter = require("./components/classes/classRouter");
 const usersRouter = require("./components/users/user.router");
-
+require("dotenv").config();
 const app = express();
-
 const db = require("./config/db.config");
-db.sync().then(console.log("Syncing Database Done!"));
 
+db.sync().then(console.log("Syncing Database Done!"));
+// console.log(process.env);
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
