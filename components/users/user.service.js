@@ -42,6 +42,17 @@ exports.findOneByEmail = async (email) => {
     console.error(error);
   }
 };
+
+exports.findOneById = async (Id) => {
+  try {
+    const foundUser = await User.findOne({
+      where: { Id: Id },
+    });
+    return foundUser;
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.updateUser = async (userID, attributeObject) => {
   try {
     await User.update(attributeObject, { where: { id: userID } });

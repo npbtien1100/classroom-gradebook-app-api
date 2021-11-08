@@ -7,9 +7,16 @@ const cors = require("cors");
 const indexRouter = require("./routes/index");
 const classesRouter = require("./components/classes/classRouter");
 const usersRouter = require("./components/users/user.router");
+const authRouter = require("./components/auth/auth.router");
 require("dotenv").config();
 const app = express();
 const db = require("./config/db.config");
+
+//passport, flash, session
+const passport = require("passport");
+const flash = require("connect-flash");
+
+require("./config/passport")(passport);
 
 db.sync().then(console.log("Syncing Database Done!"));
 // console.log(process.env);
@@ -22,6 +29,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+// Passport middleware
+app.use(
+  require("express-session")({
+    secret: "keyboard cat",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Connect flash
+app.use(flash());
+
+// Global variables
+app.use(function (req, res, next) {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  res.locals.error = req.flash("error");
+  next();
+});
 
 //set up cors
 const whitelist = ["http://localhost:3000"];
@@ -41,6 +69,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/classes", classesRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

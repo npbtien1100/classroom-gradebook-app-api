@@ -100,3 +100,36 @@ exports.forgetPassword = async (req, res) => {
 
   res.json({ message: "Please check your email to reset your password" });
 };
+
+exports.resetPassword = async (req, res) => {
+  const { email, code } = req.query;
+  const { password, confirmPassword } = req.body;
+  console.log(email + code);
+  console.log(password + confirmPassword);
+
+  //Check condition password
+  if (password != confirmPassword || password.length < 6) {
+    return res.json({ message: "Confirm password is incorrect" });
+  }
+
+  //Find user check secret code
+  const query = await findOneByEmail(email);
+  const user = query.dataValues;
+  if (user.mailSecretCode != code) {
+    return res.json({ message: "Secret code is incorrect" });
+  }
+
+  //Hash Password
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashPassword = await bcrypt.hash(req.body.password, salt);
+  user.password = hashPassword;
+  user.mailSecretCode = makeCode(26);
+
+  await updateUser(user.id, user);
+  // console.log(user.dataValues);
+  res.json({ message: "Reset Password success" });
+};
+
+exports.dashboard = async (req, res) => {
+  return res.json(req.user);
+};

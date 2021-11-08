@@ -23,7 +23,7 @@ exports.mailRegisterTemplate = (data) => `<body>
                         <tr>
                             <td bgcolor="#ffffff" align="center" valign="top"
                                 style="text-size-adjust: 100%; padding: 40px 20px 20px; border-radius: 4px 4px 0px 0px; color: rgb(17, 17, 17); font-family: Lato, Helvetica, Arial, sans-serif; font-size: 48px; letter-spacing: 4px; line-height: 48px;">
-                                <h1 style="font-size: 48px; font-weight: 400;">Welcome!</h1><img
+                                <h1 style="font-size: 48px; font-weight: 400;">Welcome to Class Room!</h1><img
                                     src="https://img.icons8.com/clouds/100/000000/handshake.png" width="125"
                                     height="120"
                                     style="border: 0px; height: auto; line-height: 48px; outline: none; display: block;">
@@ -195,8 +195,6 @@ exports.mailForgetPassWordTemplate = (data) => `<body>
                             <td bgcolor="#ffffff" align="left"
                                 style="text-size-adjust: 100%; padding: 20px 30px 40px; color: rgb(102, 102, 102); font-family: Lato, Helvetica, Arial, sans-serif; font-size: 18px; line-height: 25px;">
                                 <p style="margin: 0px;">
-                              
-                                 
                                 We heard that you lost your Class Room password. Sorry about that!
                                 
                                 But don’t worry! You can use the following button to reset your password:. Just press the button below.</p>
