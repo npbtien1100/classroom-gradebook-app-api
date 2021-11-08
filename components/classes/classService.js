@@ -19,6 +19,7 @@ Class.init(
     },
   },
   {
+    //timestamps: false,
     sequelize,
     modelName: "Class",
   }

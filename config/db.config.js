@@ -1,13 +1,15 @@
+const dbConfig = require("./db.data");
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("classroom_db", "root", "Sweet2110", {
-  host: "localhost",
-  dialect: "mysql",
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+  host: dbConfig.HOST,
+  dialect: dbConfig.dialect,
+  operatorsAliases: false,
   pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
+    max: dbConfig.pool.max,
+    min: dbConfig.pool.min,
+    acquire: dbConfig.pool.acquire,
+    idle: dbConfig.pool.idle,
   },
 });
 

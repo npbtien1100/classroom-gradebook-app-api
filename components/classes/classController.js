@@ -1,21 +1,21 @@
 const classService = require("./classService");
+const { validateCreateClass } = require("./classValidate");
 
 exports.createAClass = async (req, res) => {
-  if (!req.body.className) {
-    res.status(400).send({
-      error: "Class name can not be empty!",
+  //Validate class
+  const validated = validateCreateClass(req.body);
+  if (validated.error != null)
+    return res.status(400).send(validated.error.details[0].message);
+
+  //Create class
+  const result = await classService.createClass(req);
+  if (result.error) {
+    res.status(500).send({
+      message: result.error,
     });
     return;
-  } else {
-    const result = await classService.createClass(req);
-    if (result.error) {
-      res.status(500).send({
-        message: result.error,
-      });
-      return;
-    }
-    res.send(result);
   }
+  res.send(result);
 };
 
 exports.getAllClasses = async (req, res) => {
