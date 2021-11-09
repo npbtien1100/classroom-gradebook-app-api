@@ -1,6 +1,9 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const { use } = require("passport");
+const FacebookStrategy = require("passport-facebook").Strategy;
+const GoogleStrategy = require("passport-google").Strategy;
+const fbconfig = require("./fb.config");
 const {
   findOneByEmail,
   findOneById,
@@ -40,6 +43,38 @@ module.exports = (passport) => {
       }
     )
   );
+
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: fbconfig.facebook_key,
+        clientSecret: fbconfig.facebook_secret,
+        callbackURL: fbconfig.callback_url,
+      },
+      function (accessToken, refreshToken, profile, done) {
+        process.nextTick(function () {
+          //Check whether the User exists or not using profile.id
+          console.log(profile);
+          if (config.use_database) {
+            //Further code of Database.
+          }
+          return done(null, profile);
+        });
+      }
+    )
+  );
+  //   passport.use(new GoogleStrategy({
+  //     consumerKey: GOOGLE_CONSUMER_KEY,
+  //     consumerSecret: GOOGLE_CONSUMER_SECRET,
+  //     callbackURL: "http://www.example.com/auth/google/callback"
+  //   },
+  //   function(token, tokenSecret, profile, done) {
+  //       User.findOrCreate({ googleId: profile.id }, function (err, user) {
+  //         return done(err, user);
+  //       });
+  //   }
+  // ));
+
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });

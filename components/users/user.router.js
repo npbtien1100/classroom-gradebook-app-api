@@ -12,7 +12,6 @@ const {
   dashboard,
 } = require("./user.controller");
 
-// console.log(checkAuthenticated);
 router.get("/", checkAuthenticated, dashboard);
 router.post("/", checkNotAuthenticated, register);
 router.get("/confirm-registration", confirmRegistration);
