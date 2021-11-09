@@ -11,7 +11,6 @@ const authRouter = require("./components/auth/auth.router");
 require("dotenv").config();
 const app = express();
 const db = require("./config/db.config");
-
 //passport, flash, session
 const passport = require("passport");
 const flash = require("connect-flash");

@@ -8,12 +8,14 @@ router.post(
   checkNotAuthenticated,
   passport.authenticate("local", { failureRedirect: "/api/auth/failure" }),
   function (req, res) {
-    res.send({ message: "Login success", user: req.user });
+    res.status(200).send({ message: "Login success", user: req.user });
   }
 );
 
 router.get("/failure", (req, res) => {
-  res.json({ message: "Login fail" });
+  // console.log(req.flash);
+  // console.log(req.user);
+  res.status(400).json({ message: "Login fail" });
 });
 
 // GET /auth/google
@@ -55,7 +57,7 @@ router.get(
 router.get("/logout", checkAuthenticated, (req, res) => {
   req.logout();
   req.flash("success_msg", "You are logged out");
-  res.send({ message: "Logout Success" });
+  res.status(200).send({ message: "Logout Success" });
 });
 
 module.exports = router;

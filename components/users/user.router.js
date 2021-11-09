@@ -12,10 +12,10 @@ const {
   dashboard,
 } = require("./user.controller");
 
-router.get("/", checkAuthenticated, dashboard);
+router.get("/dashboard", checkAuthenticated, dashboard);
 router.post("/", checkNotAuthenticated, register);
 router.get("/confirm-registration", confirmRegistration);
-router.get("/forget-password", forgetPassword);
-router.post("/reset-password", resetPassword);
+router.get("/forget-password", checkNotAuthenticated, forgetPassword);
+router.post("/reset-password", checkNotAuthenticated, resetPassword);
 
 module.exports = router;

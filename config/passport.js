@@ -29,6 +29,13 @@ module.exports = (passport) => {
           });
         }
 
+        if (user.isLock == true) {
+          console.log("Your account has been locked");
+          return done(null, false, {
+            message: "Your account has been locked",
+          });
+        }
+
         //Macth password
         bcrypt.compare(password, user.password, (err, result) => {
           if (err) throw err;
@@ -48,7 +55,7 @@ module.exports = (passport) => {
       {
         clientID: process.env.FACEBOOK_KEY,
         clientSecret: process.env.FACEBOOK_SECRET,
-        callbackURL: process.env.CALLBACK_URL,
+        callbackURL: process.env.FACEBOOK_CALLBACK_URL,
       },
       function (accessToken, refreshToken, profile, done) {
         process.nextTick(function () {
@@ -62,17 +69,30 @@ module.exports = (passport) => {
       }
     )
   );
-  //   passport.use(new GoogleStrategy({
-  //     consumerKey: GOOGLE_CONSUMER_KEY,
-  //     consumerSecret: GOOGLE_CONSUMER_SECRET,
-  //     callbackURL: "http://www.example.com/auth/google/callback"
-  //   },
-  //   function(token, tokenSecret, profile, done) {
-  //       User.findOrCreate({ googleId: profile.id }, function (err, user) {
-  //         return done(err, user);
+  // passport.use(
+  //   new GoogleStrategy(
+  //     {
+  //       consumerKey: process.env.GOOGLE_CONSUMER_KEY,
+  //       consumerSecret: process.env.GOOGLE_CONSUMER_SECRET,
+  //       callbackURL: process.env.GOOGLE_CALLBACK_URL,
+  //     },
+  //     function (token, tokenSecret, profile, done) {
+  //       process.nextTick(function () {
+  //         //Check whether the User exists or not using profile.id
+  //         console.log(profile);
+  //         if (config.use_database) {
+  //           //Further code of Database.
+  //         }
+  //         return done(null, profile);
   //       });
-  //   }
-  // ));
+  //       // console.log(profile);
+  //       // return done(null, profile);
+  //       // User.findOrCreate({ googleId: profile.id }, function (err, user) {
+  //       //   return done(err, user);
+  //       // });
+  //     }
+  //   )
+  // );
 
   passport.serializeUser((user, done) => {
     done(null, user.id);
