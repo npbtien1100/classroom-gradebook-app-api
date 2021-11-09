@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const { use } = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google").Strategy;
-const fbconfig = require("./fb.config");
 const {
   findOneByEmail,
   findOneById,
@@ -47,9 +46,9 @@ module.exports = (passport) => {
   passport.use(
     new FacebookStrategy(
       {
-        clientID: fbconfig.facebook_key,
-        clientSecret: fbconfig.facebook_secret,
-        callbackURL: fbconfig.callback_url,
+        clientID: process.env.FACEBOOK_KEY,
+        clientSecret: process.env.FACEBOOK_SECRET,
+        callbackURL: process.env.CALLBACK_URL,
       },
       function (accessToken, refreshToken, profile, done) {
         process.nextTick(function () {
