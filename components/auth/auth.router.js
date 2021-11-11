@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const { checkAuthenticated, checkNotAuthenticated } = require("./auth.service");
+const jwt = require("jsonwebtoken");
 
 // router.post(
 //   "/login",
@@ -12,30 +12,43 @@ const { checkAuthenticated, checkNotAuthenticated } = require("./auth.service");
 //   }
 // );
 
-// router.get("/failure", (req, res) => {
-//   // console.log(req.flash);
-//   // console.log(req.user);
-//   res.status(400).json({ message: "Login fail" });
-// });
-
 // GET /auth/google
 //   Use passport.authenticate() as route middleware to authenticate the
 //   request.  The first step in Google authentication will involve redirecting
 //   the user to google.com.  After authorization, Google will redirect the user
 //   back to this application at /auth/google/callback
-// router.get('/auth/google',
-//   passport.authenticate('google', { scope: 'https://www.google.com/m8/feeds' });
+// router.get(
+//   "/google",
+//   passport.authenticate("google", { scope: ["profile", "email"] })
+// );
 
 // // GET /auth/google/callback
 // //   Use passport.authenticate() as route middleware to authenticate the
 // //   request.  If authentication fails, the user will be redirected back to the
 // //   login page.  Otherwise, the primary route function function will be called,
 // //   which, in this example, will redirect the user to the home page.
-// router.get('/auth/google/callback',
-//   passport.authenticate('google', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect('/');
-//   });
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", { failureRedirect: "/login" }),
+//   function (req, res) {
+//     console.log(req.user);
+//     const user = req.user;
+//     // Successful authentication, redirect home.
+//     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+//       expiresIn: 10000000,
+//     });
+
+//     // const tokenObject = Util.issueJWT(user);
+//     res.status(200).json({
+//       success: true,
+//       id: user.id,
+//       token: token,
+//       expiresIn: 10000000,
+//       message: "Login by google success",
+//     });
+//     // res.redirect("/");
+//   }
+// );
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at

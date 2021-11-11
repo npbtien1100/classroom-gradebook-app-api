@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const validate = require("../components/users/user.validate");
+const ValidateServices = require("../components/users/user.validate");
 const UserServices = require("../components/users/user.service");
 const Util = require("../lib/utils");
 const MailServices = require("../components/mailServices/mail.service");
@@ -13,22 +13,31 @@ router.get("/", function (req, res, next) {
 
 router.post("/api/register", async function (req, res, next) {
   //Validate Register
-  // console.log(req.body);
+  //console.log(req.body);
   let data = req.body;
-  const validated = validate.registerValidate(data);
+  const validated = ValidateServices.registerValidate(data);
   if (validated.error != null)
-    return res.status(400).send(validated.error.details[0].message);
+    return res.status(400).json({
+      success: false,
+      message: validated.error.details[0].message,
+    });
 
   //Check Confirm Password
   if (data.password != data.confirmPassword) {
-    return res.status(400).send("Password confirm is not correct");
+    return res.status(400).json({
+      success: false,
+      message: "Confirm password is incorrect.",
+    });
   }
 
   //Check Email Exist
   const checkEmailResult = await UserServices.findOneByEmail(data.email);
   console.log(checkEmailResult);
   if (checkEmailResult != null) {
-    return res.status(400).send("Email has already registered");
+    return res.status(400).json({
+      success: false,
+      message: "Email has already registered",
+    });
   }
   //HashPassword
   const password = data.password;
@@ -53,7 +62,10 @@ router.post("/api/register", async function (req, res, next) {
     return;
   }
 
-  res.json(result);
+  return res.status(200).json({
+    success: true,
+    message: result,
+  });
 });
 router.get("/logout", function (req, res, next) {
   res.render("index", { title: "Express" });
@@ -67,7 +79,7 @@ router.post("/api/login", async function (req, res, next) {
     if (!user) {
       return res.status(400).json({
         success: false,
-        msg: "The email you entered is not registered.",
+        message: "The email you entered is not registered.",
       });
     }
     //Check Password
@@ -76,7 +88,7 @@ router.post("/api/login", async function (req, res, next) {
     if (!isValid) {
       return res.status(400).json({
         success: false,
-        msg: "The password you entered is not correct",
+        message: "The password you entered is not correct",
       });
     }
     //Check is verified, is lock
@@ -84,14 +96,14 @@ router.post("/api/login", async function (req, res, next) {
     if (!isVerified) {
       return res.status(400).json({
         success: false,
-        msg: "Your email isn't verified. Please confirm your email.",
+        message: "Your email isn't verified. Please confirm your email.",
       });
     }
     const isLocked = user.isLock === true;
     if (isLocked) {
       return res.status(400).json({
         success: false,
-        msg: "Your account is locked.",
+        message: "Your account is locked.",
       });
     }
     //JWT

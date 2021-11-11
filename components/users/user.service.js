@@ -11,6 +11,23 @@ exports.registerUser = async (data) => {
       phone: data.phone,
       name: data.name,
       mailSecretCode: data.code,
+      image: data.image,
+    });
+    return { message: "Register new user successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: error.message || "Some error occurred while creating User!",
+    };
+  }
+};
+exports.googleCreateUser = async (data) => {
+  console.log(data);
+  try {
+    await User.create({
+      email: data.email,
+      name: data.name,
+      image: data.image,
     });
     return { message: "Register new user successfully!" };
   } catch (error) {

@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 
 //set up cors
-const whitelist = ["http://localhost:3000"];
+const whitelist = ["http://localhost:3000", process.env.URL_WEB];
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
