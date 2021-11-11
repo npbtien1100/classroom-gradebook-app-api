@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendMailRegister = (data) => {
-  console.log(data.email);
+  // console.log(data.email);
   let mailOptions = {
     from: "nguyenanhtuan12454@gmail.com",
     to: data.email,

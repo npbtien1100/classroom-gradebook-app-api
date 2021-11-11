@@ -3,20 +3,20 @@ const router = express.Router();
 const passport = require("passport");
 const { checkAuthenticated, checkNotAuthenticated } = require("./auth.service");
 
-router.post(
-  "/login",
-  checkNotAuthenticated,
-  passport.authenticate("local", { failureRedirect: "/api/auth/failure" }),
-  function (req, res) {
-    res.status(200).send({ message: "Login success", user: req.user });
-  }
-);
+// router.post(
+//   "/login",
+//   checkNotAuthenticated,
+//   passport.authenticate("local", { failureRedirect: "/api/auth/failure" }),
+//   function (req, res) {
+//     res.status(200).send({ message: "Login success", user: req.user });
+//   }
+// );
 
-router.get("/failure", (req, res) => {
-  // console.log(req.flash);
-  // console.log(req.user);
-  res.status(400).json({ message: "Login fail" });
-});
+// router.get("/failure", (req, res) => {
+//   // console.log(req.flash);
+//   // console.log(req.user);
+//   res.status(400).json({ message: "Login fail" });
+// });
 
 // GET /auth/google
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -40,24 +40,24 @@ router.get("/failure", (req, res) => {
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
 //     /auth/facebook/callback
-router.get("/facebook", passport.authenticate("facebook"));
+// router.get("/facebook", passport.authenticate("facebook"));
 
-// Facebook will redirect the user to this URL after approval.  Finish the
-// authentication process by attempting to obtain an access token.  If
-// access was granted, the user will be logged in.  Otherwise,
-// authentication has failed.
-router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: "/",
-    failureRedirect: "/failure",
-  })
-);
+// // Facebook will redirect the user to this URL after approval.  Finish the
+// // authentication process by attempting to obtain an access token.  If
+// // access was granted, the user will be logged in.  Otherwise,
+// // authentication has failed.
+// router.get(
+//   "/facebook/callback",
+//   passport.authenticate("facebook", {
+//     successRedirect: "/",
+//     failureRedirect: "/failure",
+//   })
+// );
 
-router.get("/logout", checkAuthenticated, (req, res) => {
-  req.logout();
-  req.flash("success_msg", "You are logged out");
-  res.status(200).send({ message: "Logout Success" });
-});
+// router.get("/logout", checkAuthenticated, (req, res) => {
+//   req.logout();
+//   req.flash("success_msg", "You are logged out");
+//   res.status(200).send({ message: "Logout Success" });
+// });
 
 module.exports = router;

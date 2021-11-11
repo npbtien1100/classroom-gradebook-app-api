@@ -12,52 +12,52 @@ const {
   sendMailForgetPassword,
 } = require("../mailServices/mail.service");
 
-exports.register = async (req, res) => {
-  //Validate Register
-  // console.log(req.body);
-  let data = req.body;
-  const validated = registerValidate(data);
-  if (validated.error != null)
-    return res.status(400).send(validated.error.details[0].message);
+// exports.register = async (req, res) => {
+//   //Validate Register
+//   // console.log(req.body);
+//   let data = req.body;
+//   const validated = registerValidate(data);
+//   if (validated.error != null)
+//     return res.status(400).send(validated.error.details[0].message);
 
-  //Check Confirm Password
-  if (data.password != data.confirmPassword) {
-    return res.status(400).send("Password confirm is not correct");
-  }
+//   //Check Confirm Password
+//   if (data.password != data.confirmPassword) {
+//     return res.status(400).send("Password confirm is not correct");
+//   }
 
-  //Check Email Exist
-  const checkEmailResult = await findOneByEmail(data.email);
-  console.log(checkEmailResult);
-  if (checkEmailResult != null) {
-    return res.status(400).send("Email has already registered");
-  }
-  //HashPassword
-  const salt = await bcrypt.genSalt(saltRounds);
-  const hashPassword = await bcrypt.hash(req.body.password, salt);
-  data.password = hashPassword;
+//   //Check Email Exist
+//   const checkEmailResult = await findOneByEmail(data.email);
+//   console.log(checkEmailResult);
+//   if (checkEmailResult != null) {
+//     return res.status(400).send("Email has already registered");
+//   }
+//   //HashPassword
+//   const salt = await bcrypt.genSalt(saltRounds);
+//   const hashPassword = await bcrypt.hash(req.body.password, salt);
+//   data.password = hashPassword;
 
-  //Create key and Send Mail
-  data.code = makeCode(26);
-  //console.log(data.code);
-  data.link =
-    process.env.URL_WEB +
-    "/api/users/confirm-registration?code=" +
-    data.code +
-    "&email=" +
-    data.email;
-  sendMailRegister(data);
+//   //Create key and Send Mail
+//   data.code = makeCode(26);
+//   //console.log(data.code);
+//   data.link =
+//     process.env.URL_WEB +
+//     "/api/users/confirm-registration?code=" +
+//     data.code +
+//     "&email=" +
+//     data.email;
+//   sendMailRegister(data);
 
-  //Register new User
-  const result = await registerUser(data);
-  if (result.error) {
-    res.status(500).send({
-      message: result.error,
-    });
-    return;
-  }
+//   //Register new User
+//   const result = await registerUser(data);
+//   if (result.error) {
+//     res.status(500).send({
+//       message: result.error,
+//     });
+//     return;
+//   }
 
-  res.json(result);
-};
+//   res.json(result);
+// };
 
 exports.confirmRegistration = async (req, res) => {
   const { email, code } = req.query;

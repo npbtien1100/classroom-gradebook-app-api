@@ -1,21 +1,21 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
+
 const {
-  checkAuthenticated,
-  checkNotAuthenticated,
-} = require("../auth/auth.service");
-const {
-  register,
   confirmRegistration,
   forgetPassword,
   resetPassword,
   dashboard,
 } = require("./user.controller");
 
-router.get("/dashboard", checkAuthenticated, dashboard);
-router.post("/", checkNotAuthenticated, register);
+router.get(
+  "/dashboard",
+  passport.authenticate("jwt", { session: false }),
+  dashboard
+);
 router.get("/confirm-registration", confirmRegistration);
-router.get("/forget-password", checkNotAuthenticated, forgetPassword);
-router.post("/reset-password", checkNotAuthenticated, resetPassword);
+router.get("/forget-password", forgetPassword);
+router.post("/reset-password", resetPassword);
 
 module.exports = router;
