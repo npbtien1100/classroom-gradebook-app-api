@@ -7,57 +7,7 @@ const {
 } = require("./user.service");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-const {
-  sendMailRegister,
-  sendMailForgetPassword,
-} = require("../mailServices/mail.service");
-
-exports.register = async (req, res) => {
-  //Validate Register
-  // console.log(req.body);
-  let data = req.body;
-  const validated = registerValidate(data);
-  if (validated.error != null)
-    return res.status(400).send(validated.error.details[0].message);
-
-  //Check Confirm Password
-  if (data.password != data.confirmPassword) {
-    return res.status(400).send("Password confirm is not correct");
-  }
-
-  //Check Email Exist
-  const checkEmailResult = await findOneByEmail(data.email);
-  console.log(checkEmailResult);
-  if (checkEmailResult != null) {
-    return res.status(400).send("Email has already registered");
-  }
-  //HashPassword
-  const salt = await bcrypt.genSalt(saltRounds);
-  const hashPassword = await bcrypt.hash(req.body.password, salt);
-  data.password = hashPassword;
-
-  //Create key and Send Mail
-  data.code = makeCode(26);
-  //console.log(data.code);
-  data.link =
-    process.env.URL_WEB +
-    "/api/users/confirm-registration?code=" +
-    data.code +
-    "&email=" +
-    data.email;
-  sendMailRegister(data);
-
-  //Register new User
-  const result = await registerUser(data);
-  if (result.error) {
-    res.status(500).send({
-      message: result.error,
-    });
-    return;
-  }
-
-  res.json(result);
-};
+const MailServices = require("../mailServices/mail.service");
 
 exports.confirmRegistration = async (req, res) => {
   const { email, code } = req.query;
@@ -69,22 +19,26 @@ exports.confirmRegistration = async (req, res) => {
     user.isVerify = true;
     user.mailSecretCode = makeCode(26);
     await updateUser(user.id, user);
-
-    return res.json({
+    return res.status(200).json({
+      success: true,
       message: "Verify Email Success, Now you can use your account",
     });
   }
   // console.log(user.dataValues);
-  res.json({ message: "Error verify" });
+  return res.status(400).json({
+    success: false,
+    message: "An error occurs when you verify email",
+  });
 };
 
 exports.forgetPassword = async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.body;
   const query = await findOneByEmail(email);
   const user = query.dataValues;
 
   if (user.isVerify == false)
-    return res.json({
+    return res.status(400).json({
+      success: false,
       message: "Please verify your email before",
     });
 
@@ -96,12 +50,16 @@ exports.forgetPassword = async (req, res) => {
     user.mailSecretCode +
     "&email=" +
     user.email;
-  sendMailForgetPassword(user);
+  MailServices.sendMailForgetPassword(user);
 
-  res.json({ message: "Please check your email to reset your password" });
+  return res.status(200).json({
+    success: true,
+    message: "Please check your email to reset your password",
+  });
 };
 
 exports.resetPassword = async (req, res) => {
+  console.log(req.body);
   const { email, code } = req.query;
   const { password, confirmPassword } = req.body;
   console.log(email + code);
@@ -109,14 +67,20 @@ exports.resetPassword = async (req, res) => {
 
   //Check condition password
   if (password != confirmPassword || password.length < 6) {
-    return res.json({ message: "Confirm password is incorrect" });
+    return res.status(400).json({
+      success: false,
+      message: "Confirm password is incorrect. Please try again.",
+    });
   }
 
   //Find user check secret code
   const query = await findOneByEmail(email);
   const user = query.dataValues;
   if (user.mailSecretCode != code) {
-    return res.json({ message: "Secret code is incorrect" });
+    return res.status(400).json({
+      success: false,
+      message: "Secret code is incorrect",
+    });
   }
 
   //Hash Password
@@ -127,9 +91,51 @@ exports.resetPassword = async (req, res) => {
 
   await updateUser(user.id, user);
   // console.log(user.dataValues);
-  res.json({ message: "Reset Password success" });
+  return res.status(200).json({
+    success: true,
+    message: "Reset Password success",
+  });
+  //res.json({ message: "Reset Password success" });
 };
 
 exports.dashboard = async (req, res) => {
-  return res.json(req.user);
+  //return res.json(req.user);
+  return res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+};
+
+exports.updateUserInfor = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: req.user,
+  });
+};
+exports.changePassword = async (req, res) => {
+  let user = req.user.dataValues;
+  const { password, confirmPassword } = req.body;
+  if (password.length < 6) {
+    return res.status(400).json({
+      success: false,
+      message: "Password must have the length > 6",
+    });
+  }
+  if (password != confirmPassword) {
+    return res.status(400).json({
+      success: false,
+      message: "Confirm password is incorrect. Please try again.",
+    });
+  }
+  //Hash Password
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashPassword = await bcrypt.hash(req.body.password, salt);
+  console.log(user);
+  user.password = hashPassword;
+  console.log(user);
+  await updateUser(user.id, user);
+  return res.status(200).json({
+    success: true,
+    message: "Your password is updated",
+  });
 };

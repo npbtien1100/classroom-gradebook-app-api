@@ -1,6 +1,3 @@
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
-const { use } = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const {
@@ -12,41 +9,35 @@ const {
   createFederatedUser,
   getOneFederatedUser,
 } = require("../components/federatedUser/federatedUser.service");
+const JwtStrategy = require("passport-jwt").Strategy,
+  ExtractJwt = require("passport-jwt").ExtractJwt;
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
 
 module.exports = (passport) => {
   passport.use(
-    new LocalStrategy(
-      { usernameField: "email" },
-      async (email, password, done) => {
-        //Find user
-        const query = await findOneByEmail(email);
-        if (query == null) {
-          console.log("Your email is not registered.");
-          return done(null, false, {
-            message: "Your email is not registered.",
-          });
-        }
-        const user = query.dataValues;
-        if (user.isVerify == false) {
-          console.log("Please verify your email");
-          return done(null, false, {
-            message: "Your email is not verified",
-          });
-        }
+    new JwtStrategy(opts, async function (jwt_payload, done) {
+      //console.log("Start ");
+      console.log(jwt_payload);
+      try {
+        const user = await findOneById(jwt_payload.id);
+        //console.log("User: " + user);
 
-        //Macth password
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (err) throw err;
-          if (result) {
-            return done(null, user);
-          } else {
-            console.log("Password is incorrect.");
-            return done(null, false, { message: "Password incorrect." });
-          }
-        });
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(null, false);
+          // or you could create a new account
+        }
+      } catch (error) {
+        console.log(error);
       }
-    )
+    })
   );
+
   passport.use(
     new FacebookStrategy(
       {
@@ -62,7 +53,7 @@ module.exports = (passport) => {
         const { provider, id, displayName, photos } = profile;
         const federatedUser = await getOneFederatedUser(provider, id);
         console.log("FederatedUser: ");
-        console.log({federatedUser});
+        console.log({ federatedUser });
         let user;
         if (!federatedUser) {
           user = await createUserByFederatedUser({
@@ -77,7 +68,7 @@ module.exports = (passport) => {
         } else {
           user = await findOneById(federatedUser.userId);
           console.log("Trong passport: ");
-          console.log({user});
+          console.log({ user });
         }
         return done(null, user.dataValues);
       }
@@ -98,20 +89,39 @@ module.exports = (passport) => {
       }
     )
   );
+  // passport.use(
+  //   new GoogleStrategy(
+  //     {
+  //       clientID: process.env.GOOGLE_CONSUMER_KEY,
+  //       clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
+  //       callbackURL: "http://localhost:5000/api/auth/google/callback",
+  //     },
+  //     async function (token, tokenSecret, profile, done) {
+  //       process.nextTick(async function () {
+  //         //Check whether the User exists or not using profile.id
 
-  passport.serializeUser((user, done) => {
-    console.log("Chay vao serialize!");
-    done(null, user.id);
-  });
-
-  passport.deserializeUser(async (id, done) => {
-    console.log("Chay vao Derialize!");
-    console.log("ID user: " + id);
-    const query = await findOneById(id);
-    console.log(query);
-    if (query != null) {
-      const user = query.dataValues;
-      return done(null, user);
-    } else return done(null, null);
-  });
+  //         //if (config.use_database) {
+  //         //Further code of Database.
+  //         //If user not in db then -->  create one
+  //         //return done(null, profile);
+  //         //}
+  //         try {
+  //           // console.log(profile);
+  //           const user = await UserServices.findOneByEmail(profile._json.email);
+  //           //console.log(user);
+  //           if (user) {
+  //             return done(null, profile);
+  //           } else {
+  //             UserServices.googleCreateUser({
+  //               email: profile._json.email,
+  //               name: profile._json.name,
+  //               image: profile._json.picture,
+  //             });
+  //           }
+  //         } catch (error) {}
+  //       });
+  //       return done(null, profile);
+  //     }
+  //   )
+  // );
 };

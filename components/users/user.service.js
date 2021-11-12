@@ -11,25 +11,31 @@ exports.registerUser = async (data) => {
       phone: data.phone,
       name: data.name,
       mailSecretCode: data.code,
+      image: data.image,
     });
     return { message: "Register new user successfully!" };
   } catch (error) {
     console.error(error);
     return {
-      error: error.message || "Some error occurred while creating Class!",
+      error: error.message || "Some error occurred while creating User!",
     };
   }
 };
-
-exports.makeCode = (length) => {
-  var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+exports.googleCreateUser = async (data) => {
+  console.log(data);
+  try {
+    await User.create({
+      email: data.email,
+      name: data.name,
+      image: data.image,
+    });
+    return { message: "Register new user successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: error.message || "Some error occurred while creating User!",
+    };
   }
-  return result;
 };
 
 exports.findOneByEmail = async (email) => {
@@ -53,14 +59,15 @@ exports.findOneById = async (Id) => {
     console.error(error);
   }
 };
+
 exports.updateUser = async (userID, attributeObject) => {
   try {
     await User.update(attributeObject, { where: { id: userID } });
-    return { message: "Update class successfully!" };
+    return { message: "Update user successfully!" };
   } catch (error) {
     console.error(error);
     return {
-      error: error.message || "Some error occurred while updating Class!",
+      error: error.message || "Some error occurred while updating User!",
     };
   }
 };
@@ -78,4 +85,14 @@ exports.createUserByFederatedUser = async (obj) => {
   } catch (error) {
     console.error(error);
   }
+}
+exports.makeCode = (length) => {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 };
