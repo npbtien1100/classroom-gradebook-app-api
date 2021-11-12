@@ -2,11 +2,16 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const { use } = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
-const GoogleStrategy = require("passport-google").Strategy;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const {
   findOneByEmail,
   findOneById,
+  createUserByFederatedUser,
 } = require("../components/users/user.service");
+const {
+  createFederatedUser,
+  getOneFederatedUser,
+} = require("../components/federatedUser/federatedUser.service");
 
 module.exports = (passport) => {
   passport.use(
@@ -42,42 +47,65 @@ module.exports = (passport) => {
       }
     )
   );
-
   passport.use(
     new FacebookStrategy(
       {
-        clientID: process.env.FACEBOOK_KEY,
-        clientSecret: process.env.FACEBOOK_SECRET,
-        callbackURL: process.env.CALLBACK_URL,
+        clientID: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+        profileFields: ["id", "displayName", "photos", "email"],
+        state: true,
       },
-      function (accessToken, refreshToken, profile, done) {
-        process.nextTick(function () {
-          //Check whether the User exists or not using profile.id
-          console.log(profile);
-          if (config.use_database) {
-            //Further code of Database.
-          }
-          return done(null, profile);
-        });
+      async (accessToken, refreshToken, profile, done) => {
+        console.log(profile);
+        //Find user
+        const { provider, id, displayName, photos } = profile;
+        const federatedUser = await getOneFederatedUser(provider, id);
+        console.log("FederatedUser: ");
+        console.log({federatedUser});
+        let user;
+        if (!federatedUser) {
+          user = await createUserByFederatedUser({
+            name: displayName,
+            image: photos[0].value,
+          });
+          await createFederatedUser({
+            provider: provider,
+            subject: id,
+            userId: user.id,
+          });
+        } else {
+          user = await findOneById(federatedUser.userId);
+          console.log("Trong passport: ");
+          console.log({user});
+        }
+        return done(null, user.dataValues);
       }
     )
   );
-  //   passport.use(new GoogleStrategy({
-  //     consumerKey: GOOGLE_CONSUMER_KEY,
-  //     consumerSecret: GOOGLE_CONSUMER_SECRET,
-  //     callbackURL: "http://www.example.com/auth/google/callback"
-  //   },
-  //   function(token, tokenSecret, profile, done) {
-  //       User.findOrCreate({ googleId: profile.id }, function (err, user) {
-  //         return done(err, user);
-  //       });
-  //   }
-  // ));
+
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK_URL,
+        state: true,
+      },
+      function (accessToken, refreshToken, profile, done) {
+        console.log(profile);
+        return done(null, profile);
+      }
+    )
+  );
 
   passport.serializeUser((user, done) => {
+    console.log("Chay vao serialize!");
     done(null, user.id);
   });
+
   passport.deserializeUser(async (id, done) => {
+    console.log("Chay vao Derialize!");
     console.log("ID user: " + id);
     const query = await findOneById(id);
     console.log(query);

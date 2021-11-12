@@ -52,6 +52,7 @@ exports.getOneClassByID = async (classID, arrayAttributes) => {
       where: { id: classID },
       attributes: arrayAttributes,
     });
+    console.log({foundClass});
     return foundClass;
   } catch (error) {
     console.error(error);

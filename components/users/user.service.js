@@ -64,3 +64,18 @@ exports.updateUser = async (userID, attributeObject) => {
     };
   }
 };
+
+exports.createUserByFederatedUser = async (obj) => {
+  const { name, image } = obj;
+  try {
+    const result = await User.create({
+      name: name,
+      image: image,
+    });
+    console.log("Trong service: ");
+    console.log({ result });
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};

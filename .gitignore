@@ -116,3 +116,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# config database
+config/db.data.js
+config/db.config.js
+
+# certification
+certificate/

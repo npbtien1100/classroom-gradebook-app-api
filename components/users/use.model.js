@@ -11,7 +11,7 @@ User.init(
       type: DataTypes.INTEGER,
     },
     image: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(300),
     },
     password: {
       type: DataTypes.STRING,
