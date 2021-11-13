@@ -48,7 +48,17 @@ exports.findOneByEmail = async (email) => {
     console.error(error);
   }
 };
-
+exports.findOrCreateAUser = async (whereCondition, objToCreate) => {
+  try {
+    const res = await User.findOrCreate({
+      where: whereCondition,
+      defaults: objToCreate,
+    });
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.findOneById = async (Id) => {
   try {
     const foundUser = await User.findOne({
@@ -85,7 +95,7 @@ exports.createUserByFederatedUser = async (obj) => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 exports.makeCode = (length) => {
   var result = "";
   var characters =

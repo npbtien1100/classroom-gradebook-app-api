@@ -38,6 +38,9 @@ User.init(
     mailSecretCode: {
       type: DataTypes.STRING,
     },
+    registerType: {
+      type: DataTypes.STRING,
+    },
   },
   {
     sequelize,
