@@ -6,19 +6,19 @@ const {
   getAllClasses,
   updateAClass,
   deleteAClass,
+  createDataSample,
+  test
 } = require("./classController");
 const { authenticateByJwt } = require("../auth/auth.services");
 
 /* GET users listing. */
+router.get("/test", test);
 router.get("/", authenticateByJwt, getAllClasses);
-router.post("/", authenticateByJwt, createAClass);
-router.post("/test", (req, res) => {
-  const body = req.body;
-  console.log({ body });
-  res.send("Post thanh cong!");
-});
+router.post("/", createAClass);
+router.get('/create-data-sample', createDataSample);
 router.get("/:id", authenticateByJwt, getAClass);
 router.put("/:id", authenticateByJwt, updateAClass);
 router.delete("/:id", authenticateByJwt, deleteAClass);
 
 module.exports = router;
+ 

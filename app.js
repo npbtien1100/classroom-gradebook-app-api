@@ -12,9 +12,11 @@ const passport = require("passport");
 require("dotenv").config();
 const db = require("./config/db.config");
 const configPassport = require("./config/passport");
+const createAssociations = require("./components/modelAssociation/usersClasses/userClassesModel");
 configPassport(passport);
 const app = express();
 
+createAssociations();
 db.sync().then(console.log("Syncing Database Done!"));
 // console.log(process.env);
 // view engine setup

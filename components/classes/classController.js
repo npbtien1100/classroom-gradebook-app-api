@@ -65,3 +65,21 @@ exports.deleteAClass = async (req, res) => {
   }
   res.send(result);
 };
+
+exports.createDataSample = async (req, res) => {
+  try {
+    await classService.createDataSample();
+    res.send({ message: "create data saample successfully!" });
+  } catch (error) {
+    res.status(501).send("Failed!");
+  }
+};
+
+exports.test = async(req,res)=>{
+  try {
+    await classService.test();
+    res.send({ message: "Test successfully!" });
+  } catch (error) {
+    res.status(501).send("Failed!");
+  }
+}
