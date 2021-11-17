@@ -1,6 +1,6 @@
 const Joi = require("@hapi/joi");
 
-const validateCreateClass = (data) => {
+exports.validateCreateClass = (data) => {
   const Class = {
     className: Joi.string().min(1).max(255).required(),
     classSection: Joi.string().max(255).required(),
@@ -10,4 +10,9 @@ const validateCreateClass = (data) => {
   return Joi.validate(data, Class);
 };
 
-module.exports.validateCreateClass = validateCreateClass;
+exports.validateInvitation = (data) => {
+  const emails = {
+    emails: Joi.array().required(),
+  };
+  return Joi.validate(data, emails);
+};

@@ -2,7 +2,7 @@ const {
   checkIsTeacherOfAClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 const classService = require("./classService");
-const { validateCreateClass } = require("./classValidate");
+const { validateCreateClass, validateInvitation } = require("./classValidate");
 
 exports.createAClass = async (req, res) => {
   //Validate class
@@ -25,7 +25,8 @@ exports.getAllClasses = async (req, res) => {
   const options = { orderOption: [["id", "DESC"]] };
   const result = await classService.getAllClasses(
     ["id", "className", "classSection", "subject", "room"],
-    options
+    options,
+    req.user
   );
   res.json(result);
 };
@@ -107,24 +108,76 @@ exports.getAllPeopleInClass = async (req, res) => {
     res.status(error.status || 501).json({ message: error.message });
   }
 };
-exports.joinStudentToAClass = async (req, res) => {
+exports.getJoinLink = async (req, res) => {
   try {
-    await classService.joinStudentToAClass(studentId, classId);
-    await classService.joinTeacherToAClass(teacherId, classId, t_code);
+    const result = await classService.getJoinLink(req.params.id);
+    if (result.error) {
+      res.status(500).send({
+        message: result.error,
+      });
+      return;
+    }
+    res.send(result);
   } catch (error) {
     res.status(error.status || 501).json({ message: error.message });
   }
 };
-exports.inviteTeacherToAClass = async (req, res) => {
+exports.joinStudentToAClass = async (req, res) => {
+  try {
+    if (!req.query.cjc) return res.status(400).send("Empty query parameter!");
+    const result = await classService.joinStudentToAClass(
+      req.user,
+      req.params.id,
+      req.query.cjc
+    );
+    if (result.error) {
+      res.status(500).send({
+        message: result.error,
+      });
+      return;
+    }
+    res.send(result);
+  } catch (error) {
+    res.status(error.status || 501).json({ message: error.message });
+  }
+};
+exports.inviteStudentsToAClass = async (req, res) => {
+  //check user is teacher of the class
+  const check = await checkIsTeacherOfAClass(req.params.id, req.user);
+  if (!check) return res.status(403).json({ message: "You are not allowed!" });
+  //Validate body form
+  const validated = validateInvitation(req.body);
+  if (validated.error != null)
+    return res.status(400).send(validated.error.details[0].message);
+
+  const result = await classService.inviteStudentsToAClass(
+    req.params.id,
+    req.body.emails,
+    req.user
+  );
+  if (result.error) {
+    res.status(500).send({
+      message: result.error,
+    });
+    return;
+  }
+  res.send(result);
+};
+exports.inviteTeachersToAClass = async (req, res) => {
   try {
     //check user is teacher of the class
     const check = await checkIsTeacherOfAClass(req.params.id, req.user);
     if (!check)
       return res.status(403).json({ message: "You are not allowed!" });
-
-    const result = await classService.inviteTeacherToAClass(
+    //Validate body form
+    const validated = validateInvitation(req.body);
+    if (validated.error != null)
+      return res.status(400).send(validated.error.details[0].message);
+      
+    const result = await classService.inviteTeachersToAClass(
       req.params.id,
-      req.query.email
+      req.body.emails,
+      req.user
     );
     if (result.error) {
       res.status(500).send({
@@ -139,6 +192,14 @@ exports.inviteTeacherToAClass = async (req, res) => {
 };
 exports.joinTeacherToAClass = async (req, res) => {
   try {
+    if (!req.query.itcode)
+      return res.status(400).send("Empty query parameter!");
+    const result = await classService.joinTeacherToAClass(
+      req.params.id,
+      req.user,
+      req.query.itcode
+    );
+    res.send(result);
   } catch (err) {
     res.status(err.status || 501).json({ message: err.message });
   }

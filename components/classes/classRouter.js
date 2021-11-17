@@ -16,12 +16,18 @@ router.get(
   authenticateByJwt,
   classController.getAllPeopleInClass
 );
+router.get("/:id/get-join-link", authenticateByJwt, classController.getJoinLink);
 router.get("/:id/join", authenticateByJwt, classController.joinStudentToAClass);
-router.get(
-  "/:id/invite-teacher",
+router.post(
+  "/:id/invite-teachers",
   authenticateByJwt,
-  classController.inviteTeacherToAClass
+  classController.inviteTeachersToAClass
 );
+router.post(
+  "/:id/invite-students",
+  authenticateByJwt,
+  classController.inviteStudentsToAClass
+)
 router.get(
   "/:id/accept-invitation",
   authenticateByJwt,

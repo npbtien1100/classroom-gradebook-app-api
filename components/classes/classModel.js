@@ -17,10 +17,10 @@ Class.init(
     room: {
       type: DataTypes.STRING,
     },
-    inviteCode: {
+    joinCode: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
-    }
+    },
   },
   {
     //timestamps: false,
