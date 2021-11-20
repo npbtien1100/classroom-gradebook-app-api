@@ -1,5 +1,4 @@
 const Class = require("./classModel");
-const ClassesInviteCodes = require("../../components/modelAssociation/classesInviteCodes/classesInviteCodes");
 const MailServices = require("../mailServices/mail.service");
 const {
   addUserToClass,
@@ -168,22 +167,14 @@ exports.getAllPeopleInClass = async (classId, arrayAttributes) => {
 };
 exports.inviteTeachersToAClass = async (classId, emails, user) => {
   try {
-    const tempclss = Class.build({ id: parseInt(classId) });
-
-    const [clss, ...invitecodes] = await Promise.all([
-      Class.findOne({ where: { id: classId }, attributes: ["className"] }),
-      ...emails.map((i) =>
-        tempclss.createInviteTeacherCode({ ClassId: classId })
-      ),
-    ]);
+    const clss = await Class.findOne({ where: { id: classId } });
+    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?tjc=${clss.teacherJoinCode}`;
 
     const infos = await Promise.all([
-      ...invitecodes.map((e, index) => {
+      ...emails.map((email, index) => {
         const data = {};
-        data.link =
-          process.env.URL_WEB +
-          `/api/classes/${classId}/accept-invitation?itcode=${e.inviteTeacherCode}`;
-        data.email = emails[index];
+        data.link = joinLink;
+        data.email = email;
         data.user = user.toJSON();
         data.class = clss.toJSON();
         return MailServices.sendMailTeacherInvitation(data);
@@ -199,15 +190,13 @@ exports.inviteTeachersToAClass = async (classId, emails, user) => {
     };
   }
 };
-exports.joinTeacherToAClass = async (classId, user, inviteCode) => {
+exports.joinTeacherToAClass = async (user, classId, tjc) => {
   try {
-    const checkInviteCode = await ClassesInviteCodes.findOne({
-      where: {
-        ClassId: parseInt(classId),
-        inviteTeacherCode: inviteCode,
-      },
+    //validate the teacher join code
+    const clss = await Class.findOne({
+      where: { id: classId, teacherJoinCode: tjc },
     });
-    if (!checkInviteCode) return { error: "Wrong invitation code!" };
+    if (!clss) return { error: "Wrong class join code!" };
 
     //join user to class as teacher and remove the used inviation code
     //check is member of class
@@ -228,7 +217,7 @@ exports.joinTeacherToAClass = async (classId, user, inviteCode) => {
 exports.getJoinLink = async (classId) => {
   try {
     const clss = await Class.findOne({ where: { id: classId } });
-    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?cjc=${clss.joinCode}`;
+    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?sjc=${clss.studentJoinCode}`;
     return { joinLink: joinLink };
   } catch (err) {
     console.error(err);
@@ -237,10 +226,24 @@ exports.getJoinLink = async (classId) => {
     };
   }
 };
-exports.joinStudentToAClass = async (user, classId, cjc) => {
+exports.getTeacherJoinLink = async (classId) => {
+  try {
+    const clss = await Class.findOne({ where: { id: classId } });
+    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?tjc=${clss.teacherJoinCode}`;
+    return { joinLink: joinLink };
+  } catch (err) {
+    console.error(err);
+    return {
+      error: err.message || "Some error occurred while joining class!",
+    };
+  }
+};
+exports.joinStudentToAClass = async (user, classId, sjc) => {
   try {
     //validate the class join code
-    const clss = await Class.findOne({ where: { id: classId, joinCode: cjc } });
+    const clss = await Class.findOne({
+      where: { id: classId, studentJoinCode: sjc },
+    });
     if (!clss) return { error: "Wrong class join code!" };
     //Check is member of class
     const IsMember = await checkIsMemberOfAClass(classId, user);
@@ -258,7 +261,7 @@ exports.joinStudentToAClass = async (user, classId, cjc) => {
 exports.inviteStudentsToAClass = async (classId, emails, user) => {
   try {
     const clss = await Class.findOne({ where: { id: classId } });
-    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?cjc=${clss.joinCode}`;
+    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?sjc=${clss.studentJoinCode}`;
 
     const infos = await Promise.all([
       ...emails.map((email, index) => {
@@ -323,3 +326,25 @@ exports.test = async (classId, emails, user) => {
 //     const info = await MailServices.sendMailTeacherInvitation(data);
 //     console.log("Email sent: " + info.response);
 //     return { message: "Create invitation done!" };
+
+// const tempclss = Class.build({ id: parseInt(classId) });
+
+//     const [clss, ...invitecodes] = await Promise.all([
+//       Class.findOne({ where: { id: classId }, attributes: ["className"] }),
+//       ...emails.map((i) =>
+//         tempclss.createInviteTeacherCode({ ClassId: classId })
+//       ),
+//     ]);
+
+//     const infos = await Promise.all([
+//       ...invitecodes.map((e, index) => {
+//         const data = {};
+//         data.link =
+//           process.env.URL_WEB +
+//           `/api/classes/${classId}/accept-invitation?itcode=${e.inviteTeacherCode}`;
+//         data.email = emails[index];
+//         data.user = user.toJSON();
+//         data.class = clss.toJSON();
+//         return MailServices.sendMailTeacherInvitation(data);
+//       }),
+//     ]);

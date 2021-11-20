@@ -16,8 +16,9 @@ router.get(
   authenticateByJwt,
   classController.getAllPeopleInClass
 );
-router.get("/:id/get-join-link", authenticateByJwt, classController.getJoinLink);
-router.get("/:id/join", authenticateByJwt, classController.joinStudentToAClass);
+router.get("/:id/get-student-join-link", authenticateByJwt, classController.getStudentJoinLink);
+router.get("/:id/get-teacher-join-link", authenticateByJwt, classController.getTeacherJoinLink);
+router.get("/:id/join", authenticateByJwt, classController.joinUserToAClass);
 router.post(
   "/:id/invite-teachers",
   authenticateByJwt,

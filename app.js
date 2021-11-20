@@ -1,3 +1,4 @@
+require("dotenv").config();
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
@@ -9,7 +10,6 @@ const classesRouter = require("./components/classes/classRouter");
 const usersRouter = require("./components/users/user.router");
 const authRouter = require("./components/auth/auth.router");
 const passport = require("passport");
-require("dotenv").config();
 const db = require("./config/db.config");
 const configPassport = require("./config/passport");
 configPassport(passport);

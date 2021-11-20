@@ -17,7 +17,11 @@ Class.init(
     room: {
       type: DataTypes.STRING,
     },
-    joinCode: {
+    studentJoinCode: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    teacherJoinCode: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
     },

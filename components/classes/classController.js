@@ -108,7 +108,7 @@ exports.getAllPeopleInClass = async (req, res) => {
     res.status(error.status || 501).json({ message: error.message });
   }
 };
-exports.getJoinLink = async (req, res) => {
+exports.getStudentJoinLink = async (req, res) => {
   try {
     const result = await classService.getJoinLink(req.params.id);
     if (result.error) {
@@ -122,14 +122,40 @@ exports.getJoinLink = async (req, res) => {
     res.status(error.status || 501).json({ message: error.message });
   }
 };
-exports.joinStudentToAClass = async (req, res) => {
+exports.getTeacherJoinLink = async (req, res) => {
   try {
-    if (!req.query.cjc) return res.status(400).send("Empty query parameter!");
-    const result = await classService.joinStudentToAClass(
-      req.user,
-      req.params.id,
-      req.query.cjc
-    );
+    const result = await classService.getTeacherJoinLink(req.params.id);
+    if (result.error) {
+      res.status(500).send({
+        message: result.error,
+      });
+      return;
+    }
+    res.send(result);
+  } catch (error) {
+    res.status(error.status || 501).json({ message: error.message });
+  }
+};
+exports.joinUserToAClass = async (req, res) => {
+  try {
+    const sjc = req.query.sjc;
+    const tjc = req.query.tjc;
+    console.log(tjc);
+    let result;
+    if (!sjc && !tjc) return res.status(400).send("Empty query parameter!");
+    else if (tjc) {
+      result = await classService.joinTeacherToAClass(
+        req.user,
+        req.params.id,
+        tjc
+      );
+    } else if (sjc) {
+      result = await classService.joinStudentToAClass(
+        req.user,
+        req.params.id,
+        sjc
+      );
+    }
     if (result.error) {
       res.status(500).send({
         message: result.error,
@@ -173,7 +199,7 @@ exports.inviteTeachersToAClass = async (req, res) => {
     const validated = validateInvitation(req.body);
     if (validated.error != null)
       return res.status(400).send(validated.error.details[0].message);
-      
+
     const result = await classService.inviteTeachersToAClass(
       req.params.id,
       req.body.emails,
@@ -197,7 +223,7 @@ exports.joinTeacherToAClass = async (req, res) => {
     const result = await classService.joinTeacherToAClass(
       req.params.id,
       req.user,
-      req.query.itcode
+      req.query.tjc
     );
     res.send(result);
   } catch (err) {
