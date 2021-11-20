@@ -107,6 +107,8 @@ exports.dashboard = async (req, res) => {
 };
 
 exports.updateUserInfor = async (req, res) => {
+  const data = req.body;
+  updateUser(data.Id, data);
   res.status(200).json({
     success: true,
     message: req.user,
