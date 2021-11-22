@@ -36,5 +36,5 @@ router.get("/reset-password", (req, res) => {
   const { email, code } = req.query;
   res.render("resetpassword", { title: "Reset password", email, code });
 });
-
+//router.get("/create-data-sample", createDataSample);
 module.exports = router;

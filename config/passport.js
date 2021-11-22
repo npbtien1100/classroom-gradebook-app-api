@@ -1,15 +1,9 @@
 const FacebookStrategy = require("passport-facebook").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const createError = require("http-errors");
 const {
   findOneById,
-  createUserByFederatedUser,
   findOrCreateAUser,
 } = require("../components/users/user.service");
-const {
-  createFederatedUser,
-  getOneFederatedUser,
-} = require("../components/federatedUser/federatedUser.service");
 const JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 

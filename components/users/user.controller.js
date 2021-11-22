@@ -141,3 +141,8 @@ exports.changePassword = async (req, res) => {
     message: "Your password is updated",
   });
 };
+
+// exports.createDataSample = async (req, res) => {
+//   const result = await createDataSample(req.body.array);
+//   res.json(result);
+// };

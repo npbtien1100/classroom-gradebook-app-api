@@ -3,11 +3,11 @@ const router = express.Router();
 const classController = require("./classController");
 const { authenticateByJwt } = require("../auth/auth.services");
 
+
 /* GET users listing. */
-router.get("/test/:id", authenticateByJwt, classController.test);
+// router.get("/test/:id", authenticateByJwt, createDataSample); //classController.test
 router.get("/", authenticateByJwt, classController.getAllClasses);
 router.post("/", authenticateByJwt, classController.createAClass);
-router.get("/create-data-sample", classController.createDataSample);
 router.get("/:id", authenticateByJwt, classController.getAClass);
 router.put("/:id", authenticateByJwt, classController.updateAClass);
 router.delete("/:id", authenticateByJwt, classController.deleteAClass);
@@ -16,8 +16,16 @@ router.get(
   authenticateByJwt,
   classController.getAllPeopleInClass
 );
-router.get("/:id/get-student-join-link", authenticateByJwt, classController.getStudentJoinLink);
-router.get("/:id/get-teacher-join-link", authenticateByJwt, classController.getTeacherJoinLink);
+router.get(
+  "/:id/get-student-join-link",
+  authenticateByJwt,
+  classController.getStudentJoinLink
+);
+router.get(
+  "/:id/get-teacher-join-link",
+  authenticateByJwt,
+  classController.getTeacherJoinLink
+);
 router.get("/:id/join", authenticateByJwt, classController.joinUserToAClass);
 router.post(
   "/:id/invite-teachers",
@@ -28,7 +36,7 @@ router.post(
   "/:id/invite-students",
   authenticateByJwt,
   classController.inviteStudentsToAClass
-)
+);
 router.get(
   "/:id/accept-invitation",
   authenticateByJwt,

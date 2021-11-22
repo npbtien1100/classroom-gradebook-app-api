@@ -5,6 +5,8 @@ const {
   checkIsMemberOfAClass,
   updateRole,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
+
+
 exports.createClass = async (req) => {
   const { className, classSection, subject, room } = req.body;
   try {
@@ -285,6 +287,7 @@ exports.inviteStudentsToAClass = async (classId, emails, user) => {
 };
 exports.test = async (classId, emails, user) => {
   try {
+    return { message: "done!" };
   } catch (error) {
     console.error(error);
     return {

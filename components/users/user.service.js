@@ -106,3 +106,43 @@ exports.makeCode = (length) => {
   }
   return result;
 };
+exports.makePhone = (length) => {
+  let result = "";
+  const characters = "0123456789";
+  const charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
+// exports.createDataSample = async (objArray) => {
+//   try {
+//     const student_id = 18120513;
+//     const userArray = [];
+//     const saltArray = await Promise.all(
+//       objArray.map((e) => bcrypt.genSalt(10))
+//     );
+//     const hashPasswordArray = await Promise.all(
+//       saltArray.map((e) => bcrypt.hash("123456", e))
+//     );
+//     objArray.forEach((ele, index) => {
+//       const user = {};
+//       const { email, name, picture, phone } = ele;
+//       user.email = email;
+//       user.name = `${name.last} ${name.first}`;
+//       user.image = picture.large;
+//       user.student_id = student_id + index;
+//       user.password = hashPasswordArray[index];
+//       user.phone = phone
+//       user.isVerify = true;
+//       user.mailSecretCode = this.makeCode(26);
+//       user.registerType = "registered";
+//       userArray.push(user);
+//     });
+//     await User.bulkCreate(userArray);
+//     return userArray;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };

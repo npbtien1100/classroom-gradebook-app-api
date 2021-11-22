@@ -233,6 +233,7 @@ exports.joinTeacherToAClass = async (req, res) => {
 exports.test = async (req, res) => {
   try {
     const result = await classService.test(req.params.id, req.user);
+    //res.json(result);
     res.send({ message: "Test successfully!" });
   } catch (error) {
     res.status(501).send("Failed!");
