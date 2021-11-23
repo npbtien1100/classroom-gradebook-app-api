@@ -4,8 +4,8 @@ const {
   addUserToClass,
   checkIsMemberOfAClass,
   updateRole,
+  getRoleInClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
-
 
 exports.createClass = async (req) => {
   const { className, classSection, subject, room } = req.body;
@@ -24,13 +24,16 @@ exports.createClass = async (req) => {
     };
   }
 };
-exports.getOneClassByID = async (classID, arrayAttributes) => {
+exports.getOneClassByID = async (classID, arrayAttributes, userID) => {
   try {
     const foundClass = await Class.findOne({
       where: { id: classID },
       attributes: arrayAttributes,
     });
-    return foundClass;
+    const role = await getRoleInClass(classID, userID);
+    const res = foundClass.toJSON();
+    res.userRole = role;
+    return res;
   } catch (error) {
     console.error(error);
   }

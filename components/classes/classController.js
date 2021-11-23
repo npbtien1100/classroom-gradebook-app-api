@@ -32,13 +32,11 @@ exports.getAllClasses = async (req, res) => {
 };
 
 exports.getAClass = async (req, res) => {
-  const result = await classService.getOneClassByID(req.params.id, [
-    "id",
-    "className",
-    "classSection",
-    "subject",
-    "room",
-  ]);
+  const result = await classService.getOneClassByID(
+    req.params.id,
+    ["id", "className", "classSection", "subject", "room"],
+    req.user.id
+  );
   res.json(result);
 };
 

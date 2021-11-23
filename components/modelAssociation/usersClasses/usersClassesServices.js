@@ -38,3 +38,13 @@ exports.updateRole = async (userId, classId, role) => {
     console.error(err);
   }
 };
+exports.getRoleInClass = async (classId, userId) => {
+  try {
+    const res = await UsersClassesModel.findOne({
+      where: { ClassId: classId, UserId: userId },
+    });
+    return res.role;
+  } catch (err) {
+    console.error(err);
+  }
+};

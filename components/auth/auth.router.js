@@ -5,13 +5,14 @@ const { createJWT, authenticateByJwt } = require("./auth.services");
 
 const responseAfterAuthorizing = (req, res, next) => {
   const token = createJWT({ id: req.user.id });
-  const response = {
+  const user = {
     success: true,
     user: { id: req.user.id, name: req.user.name, image: req.user.image },
     token: token,
     expiresIn: 10000000,
   };
-  res.render("callback", { layout: false, response: response });
+  const strUser = JSON.stringify(user);
+  res.render("callback", { layout: false, response: strUser });
 };
 router.get("/test", authenticateByJwt, responseAfterAuthorizing);
 router.post(
@@ -52,7 +53,9 @@ router.get(
 );
 
 router.get("/failure", (req, res) => {
-  res.render("callback", { layout: false, response: { message: "rejected" } });
+  const message = { message: "rejected" };
+  const strMessage = JSON.stringify(message);
+  res.render("callback", { layout: false, response: strMessage });
 });
 
 router.get("/logout", (req, res) => {
