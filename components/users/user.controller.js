@@ -19,10 +19,7 @@ exports.confirmRegistration = async (req, res) => {
     user.isVerify = true;
     user.mailSecretCode = makeCode(26);
     await updateUser(user.id, user);
-    return res.status(200).json({
-      success: true,
-      message: "Verify Email Success, Now you can use your account",
-    });
+    return res.redirect("http:localhost:3000/sign-in?confirmed=true");
   }
   // console.log(user.dataValues);
   return res.status(400).json({
