@@ -1,18 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const { createJWT } = require("./auth.services");
+const { createJWT, authenticateByJwt } = require("./auth.services");
 
 const responseAfterAuthorizing = (req, res, next) => {
   const token = createJWT({ id: req.user.id });
-  res.status(200).json({
+  const response = {
     success: true,
     user: { id: req.user.id, name: req.user.name, image: req.user.image },
     token: token,
     expiresIn: 10000000,
-  });
+  };
+  res.render("callback", { layout: false, response: response });
 };
-
+router.get("/test", authenticateByJwt, responseAfterAuthorizing);
 router.post(
   "/login",
   passport.authenticate("local", { failureRedirect: "/api/auth/failure" }),
@@ -51,7 +52,7 @@ router.get(
 );
 
 router.get("/failure", (req, res) => {
-  res.status(401).json({ message: "Login failed!" });
+  res.render("callback", { layout: false, response: { message: "rejected" } });
 });
 
 router.get("/logout", (req, res) => {
