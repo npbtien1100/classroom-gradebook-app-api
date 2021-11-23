@@ -1,5 +1,6 @@
 const {
   checkIsTeacherOfAClass,
+  checkIsMemberOfAClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 const classService = require("./classService");
 const { validateCreateClass, validateInvitation } = require("./classValidate");
@@ -32,6 +33,11 @@ exports.getAllClasses = async (req, res) => {
 };
 
 exports.getAClass = async (req, res) => {
+  const check = await checkIsMemberOfAClass(req.params.id, req.user);
+  if (!check) {
+    res.status(403).json({ message: "You are not allowed!" });
+    return;
+  }
   const result = await classService.getOneClassByID(
     req.params.id,
     ["id", "className", "classSection", "subject", "room"],
