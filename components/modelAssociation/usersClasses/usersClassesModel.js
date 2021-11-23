@@ -31,7 +31,7 @@ UsersClasses.init(
   }
 );
 
-Class.belongsToMany(User, { through: UsersClasses });
-User.belongsToMany(Class, { through: UsersClasses });
+Class.belongsToMany(User, { through: UsersClasses, foreignKey: "ClassId" });
+User.belongsToMany(Class, { through: UsersClasses, foreignKey: "UserId" });
 
 module.exports = UsersClasses;

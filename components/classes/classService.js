@@ -156,16 +156,16 @@ exports.getAllPeopleInClass = async (classId, arrayAttributes) => {
       students: { total: 0, students_list: [] },
     };
     foundPeople.forEach((element) => {
-      const role = element.UsersClasses.role;
+      const role = element.usersclasses.role;
       if (role === "teacher")
         res.teachers.teachers_list.push({
           ...element.toJSON(),
-          UsersClasses: role,
+          usersclasses: role,
         });
       else if (role === "student")
         res.students.students_list.push({
           ...element.toJSON(),
-          UsersClasses: role,
+          usersclasses: role,
         });
     });
     res.teachers.total = res.teachers.teachers_list.length;
