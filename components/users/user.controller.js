@@ -1,4 +1,4 @@
-const { registerValidate } = require("./user.validate");
+const { updateUserValidate } = require("./user.validate");
 const {
   registerUser,
   findOneByEmail,
@@ -19,7 +19,11 @@ exports.confirmRegistration = async (req, res) => {
     user.isVerify = true;
     user.mailSecretCode = makeCode(26);
     await updateUser(user.id, user);
-    return res.redirect("http:localhost:3000/sign-in?confirmed=true");
+    // return res.redirect('localhost:3000/sign-up?comfirmed=true')
+    return res.status(200).json({
+      success: true,
+      message: "Verify Email Success, Now you can use your account",
+    });
   }
   // console.log(user.dataValues);
   return res.status(400).json({
@@ -105,11 +109,26 @@ exports.dashboard = async (req, res) => {
 
 exports.updateUserInfor = async (req, res) => {
   const data = req.body;
-  updateUser(data.Id, data);
-  res.status(200).json({
-    success: true,
-    message: req.user,
-  });
+
+  const validated = updateUserValidate(data);
+  if (validated.error != null)
+    return res.status(400).json({
+      success: false,
+      message: validated.error.details[0].message,
+    });
+
+  console.log({ data: data, user: req.user.id });
+  const result = await updateUser(req.user.id, data);
+  if (result.message == "Update user successfully!")
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  else
+    res.status(200).json({
+      success: false,
+      message: result.message,
+    });
 };
 exports.changePassword = async (req, res) => {
   let user = req.user.dataValues;
