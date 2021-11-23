@@ -11,9 +11,13 @@ exports.checkIsTeacherOfAClass = async (classId, user) => {
   return res;
 };
 exports.checkIsMemberOfAClass = async (classId, user) => {
-  const clss = Class.build({ id: parseInt(classId) });
-  const res = await user.hasClass(clss);
-  return res;
+  try {
+    const clss = Class.build({ id: parseInt(classId) });
+    const res = await user.hasClass(clss);
+    return res;
+  } catch (err) {
+    console.error(err);
+  }
 };
 exports.addUserToClass = async (userId, classId, role) => {
   try {

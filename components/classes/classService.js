@@ -10,12 +10,13 @@ const {
 exports.createClass = async (req) => {
   const { className, classSection, subject, room } = req.body;
   try {
-    await Class.create({
+    const createdClass = await Class.create({
       className,
       classSection,
       subject,
       room,
     });
+    await addUserToClass(req.user.id, createdClass.id, "teacher");
     return { message: "Create class successfully!" };
   } catch (error) {
     console.error(error);
@@ -173,7 +174,7 @@ exports.getAllPeopleInClass = async (classId, arrayAttributes) => {
 exports.inviteTeachersToAClass = async (classId, emails, user) => {
   try {
     const clss = await Class.findOne({ where: { id: classId } });
-    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?tjc=${clss.teacherJoinCode}`;
+    const joinLink = `${process.env.URL_FRONT_END}/accept-invitation?classID=${classId}&tjc=${clss.teacherJoinCode}`;
 
     const infos = await Promise.all([
       ...emails.map((email, index) => {
@@ -222,7 +223,7 @@ exports.joinTeacherToAClass = async (user, classId, tjc) => {
 exports.getJoinLink = async (classId) => {
   try {
     const clss = await Class.findOne({ where: { id: classId } });
-    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?sjc=${clss.studentJoinCode}`;
+    const joinLink = `${process.env.URL_FRONT_END}/accept-invitation?classID=${classId}&sjc=${clss.studentJoinCode}`;
     return { joinLink: joinLink };
   } catch (err) {
     console.error(err);
@@ -234,7 +235,7 @@ exports.getJoinLink = async (classId) => {
 exports.getTeacherJoinLink = async (classId) => {
   try {
     const clss = await Class.findOne({ where: { id: classId } });
-    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?tjc=${clss.teacherJoinCode}`;
+    const joinLink = `${process.env.URL_FRONT_END}/accept-invitation?classID=${classId}&tjc=${clss.teacherJoinCode}`;
     return { joinLink: joinLink };
   } catch (err) {
     console.error(err);
@@ -266,7 +267,7 @@ exports.joinStudentToAClass = async (user, classId, sjc) => {
 exports.inviteStudentsToAClass = async (classId, emails, user) => {
   try {
     const clss = await Class.findOne({ where: { id: classId } });
-    const joinLink = `${process.env.URL_WEB}/api/classes/${classId}/join?sjc=${clss.studentJoinCode}`;
+    const joinLink = `${process.env.URL_FRONT_END}/accept-invitation?classID=${classId}&sjc=${clss.studentJoinCode}`;
 
     const infos = await Promise.all([
       ...emails.map((email, index) => {
