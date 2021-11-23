@@ -12,6 +12,7 @@ exports.registerUser = async (data) => {
       name: data.name,
       mailSecretCode: data.code,
       image: data.image,
+      registerType: "registered",
     });
     return { message: "Register new user successfully!" };
   } catch (error) {

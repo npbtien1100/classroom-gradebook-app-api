@@ -5,6 +5,8 @@ const {
   makeCode,
   updateUser,
 } = require("./user.service");
+const Util = require("../../lib/utils");
+
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const MailServices = require("../mailServices/mail.service");
@@ -132,7 +134,17 @@ exports.updateUserInfor = async (req, res) => {
 };
 exports.changePassword = async (req, res) => {
   let user = req.user.dataValues;
-  const { password, confirmPassword } = req.body;
+  const { oldPassword, password, confirmPassword } = req.body;
+  //Check Password
+  // console.log("Password " + user.password);
+  const isValid = await Util.validPassword(oldPassword, user.password);
+  if (!isValid) {
+    return res.status(400).json({
+      success: false,
+      message: "The password you entered is not correct",
+    });
+  }
+  //Validate Password
   if (password.length < 6) {
     return res.status(400).json({
       success: false,
