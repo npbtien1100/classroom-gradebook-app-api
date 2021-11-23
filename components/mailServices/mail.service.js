@@ -9,17 +9,15 @@ const {
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    // user: process.env.GMAIL_ACCOUNT,
-    // password: process.env.GMAIL_PASSSWORD,
-    user: "nguyenanhtuan12454@gmail.com",
-    pass: "Sweet2110",
+    user: process.env.GMAIL_ACCOUNT,
+    pass: process.env.GMAIL_PASSSWORD,
   },
 });
 
 exports.sendMailRegister = (data) => {
   // console.log(data.email);
   let mailOptions = {
-    from: "nguyenanhtuan12454@gmail.com",
+    from: process.env.GMAIL_ACCOUNT,
     to: data.email,
     subject: "[Register Class Room]",
     html: mailRegisterTemplate(data),
@@ -36,7 +34,7 @@ exports.sendMailRegister = (data) => {
 exports.sendMailForgetPassword = (data) => {
   console.log(data.email);
   let mailOptions = {
-    from: "nguyenanhtuan12454@gmail.com",
+    from: process.env.GMAIL_ACCOUNT,
     to: data.email,
     subject: "[RESET Password Class Room]",
     html: mailForgetPassWordTemplate(data),
@@ -53,7 +51,7 @@ exports.sendMailForgetPassword = (data) => {
 
 exports.sendMailTeacherInvitation = (data) => {
   const mailOptions = {
-    from: "nguyenanhtuan12454@gmail.com",
+    from: process.env.GMAIL_ACCOUNT,
     to: data.email,
     subject: "[Invitation to co-teach]",
     html: mailTeacherInvitationTemplate(data),
@@ -63,7 +61,7 @@ exports.sendMailTeacherInvitation = (data) => {
 };
 exports.sendMailStudentInvitation = (data) => {
   const mailOptions = {
-    from: "nguyenanhtuan12454@gmail.com",
+    from: process.env.GMAIL_ACCOUNT,
     to: data.email,
     subject: "[Invitation to class]",
     html: mailStudentInvitationTemplate(data),

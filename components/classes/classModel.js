@@ -29,7 +29,7 @@ Class.init(
   {
     //timestamps: false,
     sequelize,
-    modelName: "Class",
+    modelName: "class",
   }
 );
 
