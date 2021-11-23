@@ -8,15 +8,20 @@ const {
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 
 exports.createClass = async (req) => {
-  const { className, classSection, subject, room } = req.body;
   try {
-    const createdClass = await Class.create({
-      className,
-      classSection,
-      subject,
-      room,
-    });
-    await addUserToClass(req.user.id, createdClass.id, "teacher");
+    const { className, classSection, subject, room } = req.body;
+    // const createdClass = await Class.create({
+    //   className,
+    //   classSection,
+    //   subject,
+    //   room,
+    // });
+    // await addUserToClass(req.user.id, createdClass.id, "teacher");
+    const user = req.user;
+    await user.createClass(
+      { className, classSection, subject, room },
+      { through: { role: "teacher" } }
+    );
     return { message: "Create class successfully!" };
   } catch (error) {
     console.error(error);
