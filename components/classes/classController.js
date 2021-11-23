@@ -144,7 +144,6 @@ exports.joinUserToAClass = async (req, res) => {
   try {
     const sjc = req.query.sjc;
     const tjc = req.query.tjc;
-    console.log(tjc);
     let result;
     if (!sjc && !tjc) return res.status(400).send("Empty query parameter!");
     else if (tjc) {
