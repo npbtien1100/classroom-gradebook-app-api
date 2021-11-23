@@ -82,6 +82,13 @@ router.post("/api/login", async function (req, res, next) {
         message: "The email you entered is not registered.",
       });
     }
+    //Check Register type
+    if (user.registerType == "socialLinked") {
+      return res.status(400).json({
+        success: false,
+        message: "Please login with your social account.",
+      });
+    }
     //Check Password
     console.log("Password " + user.password);
     const isValid = await Util.validPassword(data.password, user.password);
