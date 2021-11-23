@@ -122,4 +122,4 @@ config/db.data.js
 config/db.config.js
 
 # certification
-certificate/
+# certificate/
