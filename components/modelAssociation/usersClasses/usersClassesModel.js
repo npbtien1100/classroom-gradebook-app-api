@@ -27,7 +27,7 @@ UsersClasses.init(
   },
   {
     sequelize,
-    modelName: "UsersClasses",
+    modelName: "usersclasses",
   }
 );
 
