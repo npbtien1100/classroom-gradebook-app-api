@@ -21,11 +21,11 @@ exports.confirmRegistration = async (req, res) => {
     user.isVerify = true;
     user.mailSecretCode = makeCode(26);
     await updateUser(user.id, user);
-    // return res.redirect('localhost:3000/sign-up?comfirmed=true')
-    return res.status(200).json({
-      success: true,
-      message: "Verify Email Success, Now you can use your account",
-    });
+    return res.redirect(process.env.URL_FRONT_END + "/sign-in?comfirmed=true");
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Verify Email Success, Now you can use your account",
+    // });
   }
   // console.log(user.dataValues);
   return res.status(400).json({
@@ -69,8 +69,7 @@ exports.forgetPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   console.log(req.body);
-  const { email, code } = req.query;
-  const { password, confirmPassword } = req.body;
+  const { email, code, password, confirmPassword } = req.body;
   console.log(email + code);
   console.log(password + confirmPassword);
 
