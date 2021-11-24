@@ -37,8 +37,14 @@ exports.confirmRegistration = async (req, res) => {
 exports.forgetPassword = async (req, res) => {
   const { email } = req.body;
   const query = await findOneByEmail(email);
+  if (query == null)
+    return res.status(400).json({
+      success: false,
+      message: "Email has not been registered",
+    });
   const user = query.dataValues;
 
+  console.log(user);
   if (user.isVerify == false)
     return res.status(400).json({
       success: false,
@@ -48,8 +54,8 @@ exports.forgetPassword = async (req, res) => {
   user.mailSecretCode = makeCode(26);
   await updateUser(user.id, user);
   user.link =
-    process.env.URL_WEB +
-    "/api/users/reset-password/?code=" +
+    process.env.URL_FRONT_END +
+    "/reset-password/?code=" +
     user.mailSecretCode +
     "&email=" +
     user.email;
@@ -78,6 +84,11 @@ exports.resetPassword = async (req, res) => {
 
   //Find user check secret code
   const query = await findOneByEmail(email);
+  if (query == null)
+    return res.status(400).json({
+      success: false,
+      message: "Email has not been registered",
+    });
   const user = query.dataValues;
   if (user.mailSecretCode != code) {
     return res.status(400).json({
