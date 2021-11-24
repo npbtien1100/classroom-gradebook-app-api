@@ -33,7 +33,7 @@ app.use(passport.initialize());
 //set up cors
 const whitelist = [
   "http://localhost:3000",
-  "https://vigilant-benz-fdf8d6.netlify.app",
+  process.env.URL_FRONT_END,
   process.env.URL_WEB,
 ];
 const corsOptions = {
