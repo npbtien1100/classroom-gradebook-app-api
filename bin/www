@@ -7,16 +7,16 @@
 var app = require("../app");
 var debug = require("debug")("classroom-gradebook-api:server");
 var http = require("http");
-const https = require("https");
-const fs = require("fs");
+// const https = require("https");
+// const fs = require("fs");
 
-const key = fs.readFileSync(__dirname + "/../certificate/ca.key");
-const cert = fs.readFileSync(__dirname + "/../certificate/ca.crt");
+// const key = fs.readFileSync(__dirname + "/../certificate/ca.key");
+// const cert = fs.readFileSync(__dirname + "/../certificate/ca.crt");
 
-const options = {
-  key: key,
-  cert: cert,
-};
+// const options = {
+//   key: key,
+//   cert: cert,
+// };
 /**
  * Get port from environment and store in Express.
  */
@@ -28,8 +28,8 @@ app.set("port", port);
  * Create HTTP server.
  */
 
-// var server = https.createServer(app);
-const server = https.createServer(options, app);
+var server = http.createServer(app);
+//const server = https.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.
