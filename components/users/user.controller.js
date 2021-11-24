@@ -21,11 +21,11 @@ exports.confirmRegistration = async (req, res) => {
     user.isVerify = true;
     user.mailSecretCode = makeCode(26);
     await updateUser(user.id, user);
-    // return res.redirect('localhost:3000/sign-up?comfirmed=true')
-    return res.status(200).json({
-      success: true,
-      message: "Verify Email Success, Now you can use your account",
-    });
+    return res.redirect(process.env.URL_FRONT_END + "/sign-in?comfirmed=true");
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Verify Email Success, Now you can use your account",
+    // });
   }
   // console.log(user.dataValues);
   return res.status(400).json({
@@ -37,8 +37,14 @@ exports.confirmRegistration = async (req, res) => {
 exports.forgetPassword = async (req, res) => {
   const { email } = req.body;
   const query = await findOneByEmail(email);
+  if (query == null)
+    return res.status(400).json({
+      success: false,
+      message: "Email has not been registered",
+    });
   const user = query.dataValues;
 
+  console.log(user);
   if (user.isVerify == false)
     return res.status(400).json({
       success: false,
@@ -48,8 +54,8 @@ exports.forgetPassword = async (req, res) => {
   user.mailSecretCode = makeCode(26);
   await updateUser(user.id, user);
   user.link =
-    process.env.URL_WEB +
-    "/api/users/reset-password/?code=" +
+    process.env.URL_FRONT_END +
+    "/reset-password/?code=" +
     user.mailSecretCode +
     "&email=" +
     user.email;
@@ -63,8 +69,7 @@ exports.forgetPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   console.log(req.body);
-  const { email, code } = req.query;
-  const { password, confirmPassword } = req.body;
+  const { email, code, password, confirmPassword } = req.body;
   console.log(email + code);
   console.log(password + confirmPassword);
 
@@ -78,6 +83,11 @@ exports.resetPassword = async (req, res) => {
 
   //Find user check secret code
   const query = await findOneByEmail(email);
+  if (query == null)
+    return res.status(400).json({
+      success: false,
+      message: "Email has not been registered",
+    });
   const user = query.dataValues;
   if (user.mailSecretCode != code) {
     return res.status(400).json({
