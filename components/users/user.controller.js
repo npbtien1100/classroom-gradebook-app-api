@@ -43,7 +43,13 @@ exports.forgetPassword = async (req, res) => {
       message: "Email has not been registered",
     });
   const user = query.dataValues;
-
+  //Check Register type
+  if (user.registerType == "socialLinked") {
+    return res.status(400).json({
+      success: false,
+      message: "Please login with your social account.",
+    });
+  }
   console.log(user);
   if (user.isVerify == false)
     return res.status(400).json({
