@@ -6,7 +6,11 @@ const {
   updateRole,
   getRoleInClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
-
+const {
+  updateAClassGradeStructure,
+  reOrderGradeStructure,
+  removeAGradeStructure,
+} = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
 exports.createClass = async (req) => {
   try {
     const { className, classSection, subject, room } = req.body;
@@ -304,7 +308,76 @@ exports.test = async (classId, emails, user) => {
     };
   }
 };
-
+exports.getClassGradeStructure = async (classId, arrayAttributes, options) => {
+  try {
+    const { orderOption } = options;
+    const clss = Class.build({ id: parseInt(classId) });
+    const gradeStructure = await clss.getGradeStructure({
+      attributes: arrayAttributes,
+      order: orderOption,
+    });
+    return gradeStructure;
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createAClassGradeStructure = async (classId, body) => {
+  try {
+    const { gradeTitle, gradeDetail } = body;
+    const clss = Class.build({ id: parseInt(classId) });
+    const index = await clss.countGradeStructure();
+    await clss.createGradeStructure({ gradeTitle, gradeDetail, index: index });
+    return { message: "Create class grade structure successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      error: error.message || "Some error occurred while creating Class!",
+    };
+  }
+};
+exports.updateAClassGradeStructure = async (
+  classId,
+  gradeStructureId,
+  attributeObject
+) => {
+  try {
+    await updateAClassGradeStructure(gradeStructureId, attributeObject);
+    return { message: "Update class grade structure successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      error:
+        error.message ||
+        "Some error occurred while updating class grade structure!",
+    };
+  }
+};
+exports.deleteAClassGradeStructure = async (classId, gradeStructureId) => {
+  try {
+    await removeAGradeStructure(gradeStructureId);
+    return { message: "Delete class grade structure successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      error:
+        error.message ||
+        "Some error occurred while deleting class grade structure!",
+    };
+  }
+};
+exports.reOrderGradeStructure = async (classId, srcIndex, desIndex) => {
+  try {
+    await reOrderGradeStructure(classId, srcIndex, desIndex);
+    return { message: "Reorder class grade structure successfully!" };
+  } catch (error) {
+    console.error(error);
+    return {
+      error:
+        error.message ||
+        "Some error occurred while reorder class grade structure!",
+    };
+  }
+};
 // const { Users } = await Class.findOne({
 //   where: { id: classId },
 //   attributes: ["id"],

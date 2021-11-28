@@ -3,7 +3,6 @@ const router = express.Router();
 const classController = require("./classController");
 const { authenticateByJwt } = require("../auth/auth.services");
 
-
 /* GET users listing. */
 // router.get("/test/:id", authenticateByJwt, createDataSample); //classController.test
 router.get("/", authenticateByJwt, classController.getAllClasses);
@@ -41,6 +40,31 @@ router.get(
   "/:id/accept-invitation",
   authenticateByJwt,
   classController.joinTeacherToAClass
+);
+router.get(
+  "/:id/grade-structure",
+  authenticateByJwt,
+  classController.getClassGradeStructure
+);
+router.post(
+  "/:id/grade-structure",
+  authenticateByJwt,
+  classController.createAClassGradeStructure
+);
+router.put(
+  "/:id/grade-structure/:gradeStructureId",
+  authenticateByJwt,
+  classController.updateAClassGradeStructure
+);
+router.delete(
+  "/:id/grade-structure/:gradeStructureId",
+  authenticateByJwt,
+  classController.deleteAClassGradeStructure
+);
+router.get(
+  "/:id/reorder-grade-structure",
+  authenticateByJwt,
+  classController.reOrderGradeStructure
 );
 
 module.exports = router;

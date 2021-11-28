@@ -16,3 +16,17 @@ exports.validateInvitation = (data) => {
   };
   return Joi.validate(data, emails);
 };
+exports.validateCreateClassGradeStructure = (data) => {
+  const gradeStructure = {
+    gradeTitle: Joi.string().max(255).required(),
+    gradeDetail: Joi.string().max(255).required(),
+  };
+  return Joi.validate(data, gradeStructure);
+};
+exports.validateReorderClassGradeStructure = (data) => {
+  const query = {
+    srcIndex: Joi.number().required(),
+    desIndex: Joi.number().required(),
+  };
+  return Joi.validate(data, query);
+};

@@ -3,7 +3,12 @@ const {
   checkIsMemberOfAClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 const classService = require("./classService");
-const { validateCreateClass, validateInvitation } = require("./classValidate");
+const {
+  validateCreateClass,
+  validateInvitation,
+  validateCreateClassGradeStructure,
+  validateReorderClassGradeStructure,
+} = require("./classValidate");
 
 exports.createAClass = async (req, res) => {
   //Validate class
@@ -232,6 +237,117 @@ exports.joinTeacherToAClass = async (req, res) => {
   } catch (err) {
     res.status(err.status || 501).json({ message: err.message });
   }
+};
+exports.getClassGradeStructure = async (req, res) => {
+  try {
+    const options = { orderOption: [["index"]] };
+    const result = await classService.getClassGradeStructure(
+      req.params.id,
+      ["id", "ClassId", "index", "gradeTitle", "gradeDetail"],
+      options
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(error.status || 501).json({ message: error.message });
+  }
+};
+exports.createAClassGradeStructure = async (req, res) => {
+  //check user is teacher of the class
+  const check = await checkIsTeacherOfAClass(req.params.id, req.user);
+  if (!check) {
+    res.status(403).json({ message: "You are not allowed!" });
+    return;
+  }
+  //Validate class
+  const validated = validateCreateClassGradeStructure(req.body);
+  if (validated.error != null)
+    return res.status(400).send(validated.error.details[0].message);
+  //Create class grade structure
+  const result = await classService.createAClassGradeStructure(
+    req.params.id,
+    req.body
+  );
+  if (result.error) {
+    res.status(500).send({
+      message: result.error,
+    });
+    return;
+  }
+  res.json(result);
+};
+exports.updateAClassGradeStructure = async (req, res) => {
+  //check user is teacher of the class
+  const check = await checkIsTeacherOfAClass(req.params.id, req.user);
+  if (!check) {
+    res.status(403).json({ message: "You are not allowed!" });
+    return;
+  }
+  //Validate class
+  const validated = validateCreateClassGradeStructure(req.body);
+  if (validated.error != null)
+    return res.status(400).send(validated.error.details[0].message);
+  // update class grade structure
+  const { gradeTitle, gradeDetail } = req.body;
+  const result = await classService.updateAClassGradeStructure(
+    req.params.id,
+    req.params.gradeStructureId,
+    {
+      gradeTitle,
+      gradeDetail,
+    }
+  );
+  if (result.error) {
+    res.status(500).send({
+      message: result.error,
+    });
+    return;
+  }
+  res.json(result);
+};
+exports.deleteAClassGradeStructure = async (req, res) => {
+  //check user is teacher of the class
+  const check = await checkIsTeacherOfAClass(req.params.id, req.user);
+  if (!check) {
+    res.status(403).json({ message: "You are not allowed!" });
+    return;
+  }
+  // delete class grade structure
+  const result = await classService.deleteAClassGradeStructure(
+    req.params.id,
+    req.params.gradeStructureId
+  );
+  if (result.error) {
+    res.status(500).send({
+      message: result.error,
+    });
+    return;
+  }
+  res.json(result);
+};
+exports.reOrderGradeStructure = async (req, res) => {
+  //check user is teacher of the class
+  const check = await checkIsTeacherOfAClass(req.params.id, req.user);
+  if (!check) {
+    res.status(403).json({ message: "You are not allowed!" });
+    return;
+  }
+  //Validate query
+  const validated = validateReorderClassGradeStructure(req.query);
+  if (validated.error != null)
+    return res.status(400).send(validated.error.details[0].message);
+  // reorder grade structure
+  const result = await classService.reOrderGradeStructure(
+    req.params.id,
+    parseInt(req.query.srcIndex),
+    parseInt(req.query.desIndex)
+  );
+  if (result.error) {
+    res.status(500).send({
+      message: result.error,
+    });
+    return;
+  }
+  res.json(result);
 };
 exports.test = async (req, res) => {
   try {
