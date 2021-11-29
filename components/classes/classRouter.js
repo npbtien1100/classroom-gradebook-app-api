@@ -52,7 +52,7 @@ router.post(
   classController.createAClassGradeStructure
 );
 router.put(
-  "/:id/grade-structure/:gradeStructureId",
+  "/:id/grade-structure",
   authenticateByJwt,
   classController.updateAClassGradeStructure
 );

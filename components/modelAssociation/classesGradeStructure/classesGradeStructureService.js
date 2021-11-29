@@ -13,7 +13,6 @@ exports.updateAClassGradeStructure = async (
     throw err;
   }
 };
-
 exports.reOrderGradeStructure = async (classId, srcIndex, desIndex) => {
   try {
     const selectedGradeStructure = await ClassesGradeStructure.findOne({
@@ -51,9 +50,27 @@ exports.reOrderGradeStructure = async (classId, srcIndex, desIndex) => {
   }
 };
 
-exports.removeAGradeStructure = async (gradeStructureId) => {
+exports.removeAGradeStructure = async (classId, gradeStructureId) => {
   try {
-    await ClassesGradeStructure.destroy({ where: { id: gradeStructureId } });
+    const gradeStructure = await ClassesGradeStructure.findOne({
+      where: { id: gradeStructureId },
+    });
+    const srcIndex = gradeStructure.index;
+    const destroyElement = gradeStructure.destroy();
+    const decrementElement = ClassesGradeStructure.decrement("index", {
+      where: { ClassId: classId, index: { [Op.gt]: srcIndex } },
+    });
+    await destroyElement;
+    await decrementElement;
+    return;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.bulkCreateGradeStructure = async (arrObj) => {
+  try {
+    await ClassesGradeStructure.bulkCreate(arrObj);
     return;
   } catch (error) {
     throw error;

@@ -10,7 +10,9 @@ const {
   updateAClassGradeStructure,
   reOrderGradeStructure,
   removeAGradeStructure,
+  bulkCreateGradeStructure,
 } = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
+const ClassesGradeStructure = require("../modelAssociation/classesGradeStructure/classesGradeStructureModel");
 exports.createClass = async (req) => {
   try {
     const { className, classSection, subject, room } = req.body;
@@ -323,10 +325,16 @@ exports.getClassGradeStructure = async (classId, arrayAttributes, options) => {
 };
 exports.createAClassGradeStructure = async (classId, body) => {
   try {
-    const { gradeTitle, gradeDetail } = body;
     const clss = Class.build({ id: parseInt(classId) });
     const index = await clss.countGradeStructure();
-    await clss.createGradeStructure({ gradeTitle, gradeDetail, index: index });
+
+    const arrObj = body.map((gradeStructure, i) => {
+      const { gradeTitle, gradeDetail } = gradeStructure;
+      return { ClassId: classId, gradeTitle, gradeDetail, index: index + i };
+    });
+
+    await bulkCreateGradeStructure(arrObj);
+
     return { message: "Create class grade structure successfully!" };
   } catch (error) {
     console.error(error);
@@ -335,13 +343,25 @@ exports.createAClassGradeStructure = async (classId, body) => {
     };
   }
 };
-exports.updateAClassGradeStructure = async (
-  classId,
-  gradeStructureId,
-  attributeObject
-) => {
+exports.updateAClassGradeStructure = async (classId, body) => {
   try {
-    await updateAClassGradeStructure(gradeStructureId, attributeObject);
+    await Promise.all(
+      body.map((element, index) => {
+        const { gradeTitle, gradeDetail } = element;
+        return element.id
+          ? ClassesGradeStructure.update(
+              {
+                gradeTitle,
+                gradeDetail,
+                index,
+              },
+              {
+                where: { id: element.id },
+              }
+            )
+          : ClassesGradeStructure.create({ClassId:classId, gradeTitle, gradeDetail, index });
+      })
+    );
     return { message: "Update class grade structure successfully!" };
   } catch (error) {
     console.error(error);
@@ -354,7 +374,7 @@ exports.updateAClassGradeStructure = async (
 };
 exports.deleteAClassGradeStructure = async (classId, gradeStructureId) => {
   try {
-    await removeAGradeStructure(gradeStructureId);
+    await removeAGradeStructure(classId, gradeStructureId);
     return { message: "Delete class grade structure successfully!" };
   } catch (error) {
     console.error(error);

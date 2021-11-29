@@ -17,10 +17,12 @@ exports.validateInvitation = (data) => {
   return Joi.validate(data, emails);
 };
 exports.validateCreateClassGradeStructure = (data) => {
-  const gradeStructure = {
-    gradeTitle: Joi.string().max(255).required(),
-    gradeDetail: Joi.string().max(255).required(),
-  };
+  const gradeStructure = Joi.array().required().items(
+    Joi.object({
+      gradeTitle: Joi.string().max(255).required(),
+      gradeDetail: Joi.string().max(255).required(),
+    })
+  );
   return Joi.validate(data, gradeStructure);
 };
 exports.validateReorderClassGradeStructure = (data) => {
@@ -30,3 +32,13 @@ exports.validateReorderClassGradeStructure = (data) => {
   };
   return Joi.validate(data, query);
 };
+exports.validateUpdateClassGradeStructure = (data)=>{
+  const gradeStructure = Joi.array().required().items(
+    Joi.object({
+      id: Joi.number().optional(),
+      gradeTitle: Joi.string().max(255).required(),
+      gradeDetail: Joi.string().max(255).required(),
+    })
+  );
+  return Joi.validate(data, gradeStructure);
+}

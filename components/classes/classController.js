@@ -8,6 +8,7 @@ const {
   validateInvitation,
   validateCreateClassGradeStructure,
   validateReorderClassGradeStructure,
+  validateUpdateClassGradeStructure,
 } = require("./classValidate");
 
 exports.createAClass = async (req, res) => {
@@ -283,18 +284,14 @@ exports.updateAClassGradeStructure = async (req, res) => {
     return;
   }
   //Validate class
-  const validated = validateCreateClassGradeStructure(req.body);
+  const validated = validateUpdateClassGradeStructure(req.body);
   if (validated.error != null)
     return res.status(400).send(validated.error.details[0].message);
   // update class grade structure
   const { gradeTitle, gradeDetail } = req.body;
   const result = await classService.updateAClassGradeStructure(
     req.params.id,
-    req.params.gradeStructureId,
-    {
-      gradeTitle,
-      gradeDetail,
-    }
+    req.body
   );
   if (result.error) {
     res.status(500).send({
