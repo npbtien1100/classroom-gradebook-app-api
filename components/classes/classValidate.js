@@ -20,7 +20,7 @@ exports.validateCreateClassGradeStructure = (data) => {
   const gradeStructure = Joi.array().required().items(
     Joi.object({
       gradeTitle: Joi.string().max(255).required(),
-      gradeDetail: Joi.string().max(255).required(),
+      gradeDetail: Joi.number().required(),
     })
   );
   return Joi.validate(data, gradeStructure);
@@ -37,7 +37,7 @@ exports.validateUpdateClassGradeStructure = (data)=>{
     Joi.object({
       id: Joi.number().optional(),
       gradeTitle: Joi.string().max(255).required(),
-      gradeDetail: Joi.string().max(255).required(),
+      gradeDetail: Joi.number().required(),
     })
   );
   return Joi.validate(data, gradeStructure);

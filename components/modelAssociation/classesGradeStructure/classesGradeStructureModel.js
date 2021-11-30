@@ -20,7 +20,7 @@ ClassesGradeStructure.init(
       allowNull: false,
     },
     gradeDetail: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

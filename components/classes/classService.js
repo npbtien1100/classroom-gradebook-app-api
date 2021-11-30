@@ -373,7 +373,7 @@ exports.updateAClassGradeStructure = async (classId, body) => {
     const destroy = ClassesGradeStructure.destroy({
       where: { ClassId: classId, id: { [Op.notIn]: arrId } },
     });
-    await updateOrCreate;
+    await Promise.all(updateOrCreate);
     await destroy;
     return { message: "Update class grade structure successfully!" };
   } catch (error) {
