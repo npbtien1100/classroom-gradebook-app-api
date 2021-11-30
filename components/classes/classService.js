@@ -13,6 +13,7 @@ const {
   bulkCreateGradeStructure,
 } = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
 const ClassesGradeStructure = require("../modelAssociation/classesGradeStructure/classesGradeStructureModel");
+const { Op } = require("sequelize");
 exports.createClass = async (req) => {
   try {
     const { className, classSection, subject, room } = req.body;
@@ -345,23 +346,35 @@ exports.createAClassGradeStructure = async (classId, body) => {
 };
 exports.updateAClassGradeStructure = async (classId, body) => {
   try {
-    await Promise.all(
-      body.map((element, index) => {
-        const { gradeTitle, gradeDetail } = element;
-        return element.id
-          ? ClassesGradeStructure.update(
-              {
-                gradeTitle,
-                gradeDetail,
-                index,
-              },
-              {
-                where: { id: element.id },
-              }
-            )
-          : ClassesGradeStructure.create({ClassId:classId, gradeTitle, gradeDetail, index });
-      })
-    );
+    const arrId = [];
+    const updateOrCreate = body.map((element, index) => {
+      const { gradeTitle, gradeDetail } = element;
+      if (element.id) {
+        arrId.push(element.id);
+        return ClassesGradeStructure.update(
+          {
+            gradeTitle,
+            gradeDetail,
+            index,
+          },
+          {
+            where: { id: element.id },
+          }
+        );
+      } else {
+        return ClassesGradeStructure.create({
+          ClassId: classId,
+          gradeTitle,
+          gradeDetail,
+          index,
+        });
+      }
+    });
+    const destroy = ClassesGradeStructure.destroy({
+      where: { ClassId: classId, id: { [Op.notIn]: arrId } },
+    });
+    await updateOrCreate;
+    await destroy;
     return { message: "Update class grade structure successfully!" };
   } catch (error) {
     console.error(error);
