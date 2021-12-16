@@ -14,14 +14,16 @@ StudentsClasses.init(
     },
     student_id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      allowNull: false,
+      unique: "studentInClass",
     },
     fullName: {
       type: DataTypes.STRING,
     },
     ClassId: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
+      allowNull: false,
+      unique: "studentInClass",
       references: {
         model: Class,
         key: "id",

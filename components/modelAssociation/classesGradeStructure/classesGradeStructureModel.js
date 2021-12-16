@@ -32,7 +32,7 @@ ClassesGradeStructure.init(
 
 ClassesGradeStructure.belongsTo(Class, {
   foreignKey: "ClassId",
-  onDelete: "SET NULL",
+  onDelete: "CASCADE",
 });
 Class.hasMany(ClassesGradeStructure, {
   as: "gradeStructure",
