@@ -354,3 +354,7 @@ exports.test = async (req, res) => {
     res.status(501).send("Failed!");
   }
 };
+
+exports.getGradeBoard = async (req, res) => {
+  //TODO: //
+};

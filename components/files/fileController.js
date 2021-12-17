@@ -83,7 +83,7 @@ exports.handleUploadedAssignmentGrade = async (req, res) => {
         "=",
         sequelize.col("user.student_id")
       ),
-      attributes: ["name","image","email","phone"],
+      attributes: ["name", "image", "email", "phone"],
     },
   });
   StudentsClasses.findAll();

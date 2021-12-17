@@ -67,4 +67,10 @@ router.get(
   classController.reOrderGradeStructure
 );
 
+// router.get(
+//   "/:classId/students-gradeboard",
+//   authenticateByJwt,
+//   classController.GetGradeBoard
+// );
+
 module.exports = router;
