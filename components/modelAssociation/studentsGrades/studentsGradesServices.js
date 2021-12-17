@@ -34,8 +34,8 @@ module.exports.createGrade = async (value) => {
 
 module.exports.createOrUpdateGrade = async (data) => {
   try {
-    console.log("Grade Services- create or update grade - data ");
-    console.log(data.gradeStructure_id);
+    // console.log("Grade Services- create or update grade - data ");
+    // console.log(data.gradeStructure_id);
     const foundGrade = await StudentsGrades.findOne({
       where: {
         [Op.and]: [
@@ -50,5 +50,49 @@ module.exports.createOrUpdateGrade = async (data) => {
   } catch (error) {
     //console.log(error);
     return { success: false, message: error };
+  }
+};
+
+module.exports.makeOneGradeFinalize = async (data) => {
+  try {
+    const foundGrade = await StudentsGrades.findOne({
+      where: {
+        [Op.and]: [
+          { studentsClasses_id: data.studentsClasses_id },
+          { gradeStructure_id: data.gradeStructure_id },
+        ],
+      },
+    });
+    foundGrade.finalizedGrade = foundGrade.grade;
+    const result = await foundGrade.save();
+    return { success: true, message: result };
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports.makeAllGradeFinalize = async (data) => {
+  try {
+    const foundGrades = await StudentsGrades.findAll({
+      where: {
+        gradeStructure_id: data.gradeStructure_id,
+      },
+      attributes: ["studentsClasses_id", "gradeStructure_id"],
+      raw: true,
+      nest: true,
+    });
+    console.log(foundGrades);
+    await Promise.all(
+      foundGrades.map(async (element) => {
+        // console.log(element);
+        await this.makeOneGradeFinalize({
+          studentsClasses_id: element.studentsClasses_id,
+          gradeStructure_id: element.gradeStructure_id,
+        });
+      })
+    );
+    return { success: true };
+  } catch (error) {
+    return error;
   }
 };

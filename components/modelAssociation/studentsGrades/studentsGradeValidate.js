@@ -10,3 +10,22 @@ const gradeInputValidate = (data) => {
 };
 
 exports.gradeInputValidate = gradeInputValidate;
+
+const makeFinalizeValidate = (data) => {
+  const grade = {
+    studentsClasses_id: Joi.number(),
+    gradeStructure_id: Joi.number(),
+  };
+  return Joi.validate(data, grade);
+};
+
+exports.makeFinalizeValidate = makeFinalizeValidate;
+
+const makeAllFinalizeValidate = (data) => {
+  const grade = {
+    gradeStructure_id: Joi.number(),
+  };
+  return Joi.validate(data, grade);
+};
+
+exports.makeAllFinalizeValidate = makeAllFinalizeValidate;
