@@ -27,7 +27,7 @@ function MapGrade(rawGrades, AllGradeCompositions, student_id) {
   return AllGradeCompositions;
 }
 exports.MapGrade = MapGrade;
-function CreateAllGradeCompositions(grade_structure_list) {
+function CreateAllGradeCompositions(grade_structure_list, studentsClasses_id) {
   const len = grade_structure_list.length;
   let result = [];
   for (let i = 0; i < len; i++) {
@@ -40,7 +40,7 @@ function CreateAllGradeCompositions(grade_structure_list) {
       gradeTitle: "",
       gradeDetail: 0,
     };
-    grade.studentsClasses_id = grade_structure_list[i].ClassId;
+    grade.studentsClasses_id = studentsClasses_id;
     grade.gradeStructure_id = grade_structure_list[i].id;
     grade.gradeTitle = grade_structure_list[i].gradeTitle;
     grade.gradeDetail = grade_structure_list[i].gradeDetail;

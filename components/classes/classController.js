@@ -386,13 +386,27 @@ exports.getGradeBoard = async (req, res) => {
       await StudentClassServices.getAllVirtualStudent(classId);
     //Get All Real Student
     const realStudents = await classService.getAllStudentInClass(classId);
+    //Create new Student Classes if Not Exist
+    await Promise.all(
+      realStudents.map(async (student) => {
+        //console.log(student);
+        if (student.student_id == null) return;
+        const el = {
+          fullName: student.name,
+          ClassId: student.ClassId,
+          student_id: student.student_id,
+        };
+        // console.log({ el });
+        await StudentClassServices.CreateIfNotExistStudentsClasses(el);
+      })
+    );
     //Map virtual student with real student
     const allStudent = MapVirtualAndReadlStudent(
       studentVirtualInClass,
       realStudents
     );
 
-    // //get student import from Upload
+    //get student import from DB
     let studentGrades = [];
     await Promise.all(
       allStudent.map(async (el) => {

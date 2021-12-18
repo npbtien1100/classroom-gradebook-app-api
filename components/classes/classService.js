@@ -486,6 +486,7 @@ exports.getAllStudentInClass = async (classId) => {
         "users.student_id",
         "users.image",
         "users.usersclasses.role",
+        "users.usersclasses.ClassId",
       ],
     });
     const result = (await foundStudent).filter((e) => e.role == "student");

@@ -9,6 +9,7 @@ const {
   CreateAllGradeCompositions,
   MapGrade,
 } = require("./util");
+const { date } = require("@hapi/joi");
 
 module.exports.getAveragePointsOfOneClass = async (classId) => {
   try {
@@ -161,15 +162,25 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       ],
       raw: true,
     });
-    //console.log({ rawGrades });
+
     rawGrades = convertToResult(rawGrades, attributes);
 
     const grade_structure_list =
       await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
 
+    // const classId = rawGrades[0].studentsClasses_id;
+    const studentsClasses_id = await StudentsClasses.findOne({
+      where: {
+        student_id: student_id,
+      },
+      raw: true,
+    });
+
     //Create All grades composition
-    const AllGradeCompositions =
-      CreateAllGradeCompositions(grade_structure_list);
+    const AllGradeCompositions = CreateAllGradeCompositions(
+      grade_structure_list,
+      studentsClasses_id.id
+    );
     //Map them
     const finalResult = MapGrade(rawGrades, AllGradeCompositions, student_id);
     return finalResult;
@@ -179,5 +190,50 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       success: false,
       error: error,
     };
+  }
+};
+
+module.exports.CreateOneStudentsClasses = async ({
+  fullName,
+  ClassId,
+  student_id,
+}) => {
+  try {
+    const result = await StudentsClasses.create({
+      fullName,
+      ClassId,
+      student_id,
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+module.exports.CreateIfNotExistStudentsClasses = async ({
+  fullName,
+  ClassId,
+  student_id,
+}) => {
+  try {
+    let result = await StudentsClasses.findOne({
+      where: {
+        fullName,
+        ClassId,
+        student_id,
+      },
+    });
+    console.log({ result });
+    if (result == null)
+      result = await this.CreateOneStudentsClasses({
+        fullName,
+        ClassId,
+        student_id,
+      });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };
