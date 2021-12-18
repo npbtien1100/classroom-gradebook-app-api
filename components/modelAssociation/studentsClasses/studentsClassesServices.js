@@ -35,6 +35,7 @@ module.exports.getAveragePointsOfOneClass = async (classId) => {
       raw: true,
     });
     result = convertToResult(result, attributes);
+    result = AddAveragePoint(result);
     return result;
   } catch (error) {
     console.log(error);
@@ -174,6 +175,16 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
     };
   }
 };
+function AddAveragePoint(result) {
+  let len = result.length;
+  let avg = 0;
+  for (let i = 0; i < len; i++) {
+    if (result[i].averagePoint != null)
+      avg += (result[i].averagePoint * result[i].gradeDetail) / 100;
+  }
+  return [...result, { averagePoint: avg }];
+}
+
 function MapGrade(rawGrades, AllGradeCompositions, student_id) {
   const len = AllGradeCompositions.length;
   for (let i = 0; i < len; i++) {

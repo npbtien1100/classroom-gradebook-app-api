@@ -362,13 +362,12 @@ exports.getGradeBoard = async (req, res) => {
   const { classId } = req.params;
   try {
     //get grade structure list
-    const grade_structure_list =
+    const gradeStructureList =
       await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
     // //get average point
-    const average_point = await StudentClassServices.getAveragePointsOfOneClass(
+    const averagePoint = await StudentClassServices.getAveragePointsOfOneClass(
       classId
     );
-    // console.log({ average_point });
 
     //GET All Virtual Student
     const studentVirtualInClass =
@@ -399,8 +398,8 @@ exports.getGradeBoard = async (req, res) => {
     });
 
     res.json({
-      grade_structure_list,
-      average_point,
+      gradeStructureList,
+      averagePoint,
       allStudent,
       studentGrades,
     });
