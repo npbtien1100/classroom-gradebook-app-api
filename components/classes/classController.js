@@ -3,6 +3,8 @@ const {
   checkIsMemberOfAClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 const classService = require("./classService");
+const ClassesGradeStructureServices = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
+const StudentClassServices = require("../modelAssociation/studentsClasses/studentsClassesServices");
 const {
   validateCreateClass,
   validateInvitation,
@@ -354,3 +356,95 @@ exports.test = async (req, res) => {
     res.status(501).send("Failed!");
   }
 };
+
+exports.getGradeBoard = async (req, res) => {
+  //TODO: //
+  const { classId } = req.params;
+  try {
+    //get grade structure list
+    const gradeStructureList =
+      await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
+    // //get average point
+    const averagePoint = await StudentClassServices.getAveragePointsOfOneClass(
+      classId
+    );
+
+    //GET All Virtual Student
+    const studentVirtualInClass =
+      await StudentClassServices.getAllVirtualStudent(classId);
+    //Get All Real Student
+    const realStudents = await classService.getAllStudentInClass(classId);
+    //Map virtual student with real student
+    const allStudent = MapVirtualAndReadlStudent(
+      studentVirtualInClass,
+      realStudents
+    );
+
+    // //get student import from Upload
+    let studentGrades = [];
+    await Promise.all(
+      allStudent.map(async (el) => {
+        let result = await StudentClassServices.getAllCompositionStudent(
+          classId,
+          el.student_id
+        );
+        studentGrades.push(result);
+      })
+    );
+
+    //Caculate DTB of student
+    studentGrades = studentGrades.map((el) => {
+      return CaculateAverageOfEachStudent(el);
+    });
+
+    res.json({
+      gradeStructureList,
+      averagePoint,
+      allStudent,
+      studentGrades,
+    });
+  } catch (error) {
+    res.status(error.status || 501).json({ message: error.message });
+  }
+};
+
+function CaculateAverageOfEachStudent(studentsGrades) {
+  let averagePoint = 0;
+  let len = studentsGrades.length;
+  for (let i = 0; i < len; i++) {
+    // console.log(studentsGrades[i].finalizedGrade);
+    if (studentsGrades[i].finalizedGrade != null)
+      averagePoint +=
+        (studentsGrades[i].finalizedGrade * studentsGrades[i].gradeDetail) /
+        100;
+  }
+  return [...studentsGrades, { averagePoint }];
+}
+
+function MapVirtualAndReadlStudent(studentVirtualGrades, realStudents) {
+  let len = realStudents.length;
+  for (let i = 0; i < len; i++) {
+    let pos = FindInArray(studentVirtualGrades, realStudents[i]);
+    if (pos == -1) {
+      if (realStudents[i]["student_id"] != null)
+        studentVirtualGrades.push({
+          ClassId: realStudents[i]["users.usersclasses.ClassId"],
+          student_id: realStudents[i]["student_id"],
+          fullName: realStudents[i]["name"],
+          image: realStudents[i]["image"],
+        });
+    } else
+      studentVirtualGrades[pos] = {
+        ...studentVirtualGrades[pos],
+        image: realStudents[i].image,
+      };
+  }
+  return studentVirtualGrades;
+}
+function FindInArray(studentVirtualGrades, realStudent) {
+  let len = studentVirtualGrades.length;
+  for (let i = 0; i < len; i++) {
+    if (studentVirtualGrades[i].student_id == realStudent.student_id) return i;
+  }
+  return -1;
+}

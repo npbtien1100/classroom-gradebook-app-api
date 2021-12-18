@@ -14,6 +14,8 @@ const {
 } = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
 const ClassesGradeStructure = require("../modelAssociation/classesGradeStructure/classesGradeStructureModel");
 const { Op } = require("sequelize");
+const UsersClasses = require("../modelAssociation/usersClasses/usersClassesModel");
+const User = require("../users/use.model");
 exports.createClass = async (req) => {
   try {
     const { className, classSection, subject, room } = req.body;
@@ -466,3 +468,29 @@ exports.reOrderGradeStructure = async (classId, srcIndex, desIndex) => {
 //         return MailServices.sendMailTeacherInvitation(data);
 //       }),
 //     ]);
+
+exports.getAllStudentInClass = async (classId) => {
+  try {
+    const foundStudent = Class.findAll({
+      where: {
+        id: classId,
+      },
+      include: {
+        model: User,
+      },
+      raw: true,
+      attributes: [
+        "id",
+        "users.id",
+        "users.name",
+        "users.student_id",
+        "users.image",
+        "users.usersclasses.role",
+      ],
+    });
+    const result = (await foundStudent).filter((e) => e.role == "student");
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
