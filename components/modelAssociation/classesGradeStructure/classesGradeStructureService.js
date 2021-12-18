@@ -76,3 +76,22 @@ exports.bulkCreateGradeStructure = async (arrObj) => {
     throw error;
   }
 };
+
+module.exports.getAllClassGradeStructure = async (classId) => {
+  try {
+    const foundClassGradeStructures = await ClassesGradeStructure.findAll({
+      where: { ClassId: classId },
+      raw: true,
+      nest: true,
+      order: [["index", "ASC"]],
+    });
+    //console.log({ f: foundClassGradeStructures });
+    return foundClassGradeStructures;
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error: error,
+    };
+  }
+};
