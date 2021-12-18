@@ -12,6 +12,10 @@ const {
   validateReorderClassGradeStructure,
   validateUpdateClassGradeStructure,
 } = require("./classValidate");
+const {
+  MapVirtualAndReadlStudent,
+  CaculateAverageOfEachStudent,
+} = require("./classUtil");
 
 exports.createAClass = async (req, res) => {
   //Validate class
@@ -361,6 +365,14 @@ exports.getGradeBoard = async (req, res) => {
   //TODO: //
   const { classId } = req.params;
   try {
+    //Check role
+    const isTeacher = await checkIsTeacherOfAClass(classId, req.user);
+
+    if (!isTeacher)
+      return req.status(400).json({
+        success: false,
+        message: "Access denied",
+      });
     //get grade structure list
     const gradeStructureList =
       await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
@@ -398,6 +410,7 @@ exports.getGradeBoard = async (req, res) => {
     });
 
     res.json({
+      success: true,
       gradeStructureList,
       averagePoint,
       allStudent,
@@ -407,44 +420,3 @@ exports.getGradeBoard = async (req, res) => {
     res.status(error.status || 501).json({ message: error.message });
   }
 };
-
-function CaculateAverageOfEachStudent(studentsGrades) {
-  let averagePoint = 0;
-  let len = studentsGrades.length;
-  for (let i = 0; i < len; i++) {
-    // console.log(studentsGrades[i].finalizedGrade);
-    if (studentsGrades[i].finalizedGrade != null)
-      averagePoint +=
-        (studentsGrades[i].finalizedGrade * studentsGrades[i].gradeDetail) /
-        100;
-  }
-  return [...studentsGrades, { averagePoint }];
-}
-
-function MapVirtualAndReadlStudent(studentVirtualGrades, realStudents) {
-  let len = realStudents.length;
-  for (let i = 0; i < len; i++) {
-    let pos = FindInArray(studentVirtualGrades, realStudents[i]);
-    if (pos == -1) {
-      if (realStudents[i]["student_id"] != null)
-        studentVirtualGrades.push({
-          ClassId: realStudents[i]["users.usersclasses.ClassId"],
-          student_id: realStudents[i]["student_id"],
-          fullName: realStudents[i]["name"],
-          image: realStudents[i]["image"],
-        });
-    } else
-      studentVirtualGrades[pos] = {
-        ...studentVirtualGrades[pos],
-        image: realStudents[i].image,
-      };
-  }
-  return studentVirtualGrades;
-}
-function FindInArray(studentVirtualGrades, realStudent) {
-  let len = studentVirtualGrades.length;
-  for (let i = 0; i < len; i++) {
-    if (studentVirtualGrades[i].student_id == realStudent.student_id) return i;
-  }
-  return -1;
-}
