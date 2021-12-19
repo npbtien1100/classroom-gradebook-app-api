@@ -1,5 +1,6 @@
 function CaculateAverageOfEachStudent(studentsGrades) {
   let averagePoint = 0;
+  let expectedAveragePoint = 0;
   let len = studentsGrades.length;
   for (let i = 0; i < len; i++) {
     // console.log(studentsGrades[i].finalizedGrade);
@@ -7,9 +8,13 @@ function CaculateAverageOfEachStudent(studentsGrades) {
       averagePoint +=
         (studentsGrades[i].finalizedGrade * studentsGrades[i].gradeDetail) /
         100;
+    if (studentsGrades[i].grade != null)
+      expectedAveragePoint +=
+        (studentsGrades[i].grade * studentsGrades[i].gradeDetail) / 100;
   }
-  return [...studentsGrades, { averagePoint }];
+  return [...studentsGrades, { averagePoint, expectedAveragePoint }];
 }
+
 exports.CaculateAverageOfEachStudent = CaculateAverageOfEachStudent;
 function MapVirtualAndReadlStudent(studentVirtualGrades, realStudents) {
   let len = realStudents.length;

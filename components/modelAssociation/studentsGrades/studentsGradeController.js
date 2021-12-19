@@ -14,7 +14,6 @@ module.exports.CreateOrUpdateStudentGrades = async (req, res) => {
     });
   //Create or update
   const result = await GradeService.createOrUpdateGrade(data);
-
   console.log({ result });
   res.json(result);
 };

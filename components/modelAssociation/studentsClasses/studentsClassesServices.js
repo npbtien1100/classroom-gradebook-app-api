@@ -19,6 +19,7 @@ module.exports.getAveragePointsOfOneClass = async (classId) => {
       "averagePoint",
       "gradeTitle",
       "gradeDetail",
+      "expectedAveragePoint",
     ];
     let result = await ClassGradeStructure.findAll({
       include: {
@@ -37,6 +38,13 @@ module.exports.getAveragePointsOfOneClass = async (classId) => {
             Sequelize.col("studentsClasses.studentsGrades.finalizedGrade")
           ),
           "averagePoint",
+        ],
+        [
+          Sequelize.fn(
+            "avg",
+            Sequelize.col("studentsClasses.studentsGrades.grade")
+          ),
+          "expectedAveragePoint",
         ],
       ],
       raw: true,
