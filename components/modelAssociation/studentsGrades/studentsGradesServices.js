@@ -63,7 +63,8 @@ module.exports.makeOneGradeFinalize = async (data) => {
         ],
       },
     });
-    if (foundGrade.finalizedGrade != foundGrade.grade) {
+    const isNotFinalized = foundGrade.finalizedGrade != foundGrade.grade;
+    if (isNotFinalized) {
       foundGrade.finalizedGrade = foundGrade.grade;
       const result = await foundGrade.save();
       return { success: true, message: result };

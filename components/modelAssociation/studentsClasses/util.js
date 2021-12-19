@@ -1,11 +1,15 @@
 function AddAveragePoint(result) {
   let len = result.length;
   let avg = 0;
+  let expectedAveragePoint = 0;
   for (let i = 0; i < len; i++) {
     if (result[i].averagePoint != null)
       avg += (result[i].averagePoint * result[i].gradeDetail) / 100;
+    if (result[i].expectedAveragePoint != null)
+      expectedAveragePoint +=
+        (result[i].expectedAveragePoint * result[i].gradeDetail) / 100;
   }
-  return [...result, { averagePoint: avg }];
+  return [...result, { averagePoint: avg, expectedAveragePoint }];
 }
 exports.AddAveragePoint = AddAveragePoint;
 function MapGrade(rawGrades, AllGradeCompositions, student_id) {

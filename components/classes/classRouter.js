@@ -69,7 +69,7 @@ router.get(
 
 router.get(
   "/:classId/students-gradeboard",
-  authenticateByJwt,
+  //authenticateByJwt,
   classController.getGradeBoard
 );
 
