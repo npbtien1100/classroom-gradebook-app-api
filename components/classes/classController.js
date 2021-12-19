@@ -366,13 +366,13 @@ exports.getGradeBoard = async (req, res) => {
   const { classId } = req.params;
   try {
     //Check role
-    // const isTeacher = await checkIsTeacherOfAClass(classId, req.user);
+    const isTeacher = await checkIsTeacherOfAClass(classId, req.user);
 
-    // if (!isTeacher)
-    //   return req.status(400).json({
-    //     success: false,
-    //     message: "Access denied",
-    //   });
+    if (!isTeacher)
+      return req.status(400).json({
+        success: false,
+        message: "Access denied",
+      });
     //get grade structure list
     const gradeStructureList =
       await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
