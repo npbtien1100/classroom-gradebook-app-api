@@ -11,6 +11,27 @@ const {
 } = require("./util");
 const { date } = require("@hapi/joi");
 
+module.exports.getAveragePointsOfOneStudentGrades = async (
+  gradeStructureId
+) => {
+  try {
+    let result = await StudentsGrades.findOne({
+      where: { gradeStructure_id: gradeStructureId },
+      attributes: [
+        [Sequelize.fn("avg", Sequelize.col("finalizedGrade")), "averagePoint"],
+        "gradeStructure_id",
+      ],
+      raw: true,
+    });
+    return result;
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      error: error,
+    };
+  }
+};
 module.exports.getAveragePointsOfOneClass = async (classId) => {
   try {
     const attributes = [

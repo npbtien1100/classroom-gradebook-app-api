@@ -1,5 +1,6 @@
 const GradeValidation = require("./studentsGradeValidate");
 const GradeService = require("./studentsGradesServices");
+const StudentClassServices = require("../studentsClasses/studentsClassesServices");
 
 module.exports.CreateOrUpdateStudentGrades = async (req, res) => {
   console.log(req.body);
@@ -14,8 +15,6 @@ module.exports.CreateOrUpdateStudentGrades = async (req, res) => {
     });
   //Create or update
   const result = await GradeService.createOrUpdateGrade(data);
-
-  console.log({ result });
   res.json(result);
 };
 
@@ -31,9 +30,13 @@ module.exports.MakeOneGradeFinalize = async (req, res) => {
       message: validated.error.details[0].message,
     });
   //Make Finalize Grade
-  const result = await GradeService.makeOneGradeFinalize(data);
-  console.log({ result });
-  res.json(result);
+  await GradeService.makeOneGradeFinalize(data);
+  //GET Class ID = ?
+  const Subject = await StudentClassServices.getAveragePointsOfOneStudentGrades(
+    data.gradeStructure_id
+  );
+
+  res.json({ success: true, Subject });
 };
 
 module.exports.MakeAllGradeFinalize = async (req, res) => {
@@ -48,7 +51,9 @@ module.exports.MakeAllGradeFinalize = async (req, res) => {
       message: validated.error.details[0].message,
     });
   //Make Finalize Grade
-  const result = await GradeService.makeAllGradeFinalize(data);
-  console.log({ result });
-  res.json(result);
+  await GradeService.makeAllGradeFinalize(data);
+  const Subject = await StudentClassServices.getAveragePointsOfOneStudentGrades(
+    data.gradeStructure_id
+  );
+  res.json({ success: true, Subject });
 };
