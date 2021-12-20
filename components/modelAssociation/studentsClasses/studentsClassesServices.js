@@ -144,11 +144,8 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
     let rawGrades = await StudentsClasses.findAll({
       include: {
         model: ClassGradeStructure,
-        required: true,
-        right: true,
       },
       where: {
-        ClassId: classId,
         student_id: student_id,
       },
       attributes: [
@@ -162,7 +159,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       ],
       raw: true,
     });
-
+    // return rawGrades;
     rawGrades = convertToResult(rawGrades, attributes);
 
     const grade_structure_list =
@@ -219,7 +216,6 @@ module.exports.CreateIfNotExistStudentsClasses = async ({
   try {
     let result = await StudentsClasses.findOne({
       where: {
-        fullName,
         ClassId,
         student_id,
       },
