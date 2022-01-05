@@ -10,10 +10,13 @@ function AddAveragePoint(result) {
 exports.AddAveragePoint = AddAveragePoint;
 function MapGrade(rawGrades, AllGradeCompositions, student_id) {
   const len = AllGradeCompositions.length;
+
   for (let i = 0; i < len; i++) {
     AllGradeCompositions[i].student_id = student_id;
     const len1 = rawGrades.length;
     for (let j = 0; j < len1; j++) {
+      AllGradeCompositions[i].id = rawGrades[j].id;
+
       if (
         AllGradeCompositions[i].gradeStructure_id ==
         rawGrades[j].gradeStructure_id
@@ -39,6 +42,7 @@ function CreateAllGradeCompositions(grade_structure_list, studentsClasses_id) {
       student_id: 0,
       gradeTitle: "",
       gradeDetail: 0,
+      id: "",
     };
     grade.studentsClasses_id = studentsClasses_id;
     grade.gradeStructure_id = grade_structure_list[i].id;

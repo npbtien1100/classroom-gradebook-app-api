@@ -10,6 +10,7 @@ const {
   MapGrade,
 } = require("./util");
 const { date } = require("@hapi/joi");
+const GradeReviews = require("../gradeReviews/gradeReviewsModel");
 
 module.exports.getAveragePointsOfOneStudentGrades = async (
   gradeStructureId
@@ -161,6 +162,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       "student_id",
       "gradeTitle",
       "gradeDetail",
+      "id",
     ];
     let rawGrades = await StudentsClasses.findAll({
       include: {
@@ -170,6 +172,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
         student_id: student_id,
       },
       attributes: [
+        "classesGradeStructures.studentsGrades.id",
         "classesGradeStructures.studentsGrades.studentsClasses_id",
         "classesGradeStructures.studentsGrades.gradeStructure_id",
         "classesGradeStructures.studentsGrades.grade",
@@ -180,6 +183,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       ],
       raw: true,
     });
+
     // return rawGrades;
     rawGrades = convertToResult(rawGrades, attributes);
 
@@ -201,6 +205,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
     );
     //Map them
     const finalResult = MapGrade(rawGrades, AllGradeCompositions, student_id);
+    //console.log(finalResult);
     return finalResult;
   } catch (error) {
     console.log(error);

@@ -63,6 +63,8 @@ module.exports.makeOneGradeFinalize = async (data) => {
         ],
       },
     });
+    if (foundGrade == null || foundGrade.isFinalDecision == true)
+      return { success: false, message: "..." };
     foundGrade.finalizedGrade = foundGrade.grade;
     const result = await foundGrade.save();
     return { success: true, message: result };
@@ -92,6 +94,24 @@ module.exports.makeAllGradeFinalize = async (data) => {
       })
     );
     return { success: true };
+  } catch (error) {
+    return error;
+  }
+};
+
+module.exports.MakeAsFinalDecision = async (data) => {
+  try {
+    const foundGrade = await StudentsGrades.findOne({
+      where: {
+        id: data.studentGrade_Id,
+      },
+    });
+    if (foundGrade == null || foundGrade.isFinalDecision == true)
+      return { success: false, message: "..." };
+    foundGrade.finalizedGrade = data.grade;
+    foundGrade.isFinalDecision = true;
+    const result = await foundGrade.save();
+    return { success: true, message: result };
   } catch (error) {
     return error;
   }

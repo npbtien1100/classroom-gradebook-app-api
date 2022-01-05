@@ -1,10 +1,12 @@
 const {
   checkIsTeacherOfAClass,
   checkIsMemberOfAClass,
+  checkIsStudentOfAClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 const classService = require("./classService");
 const ClassesGradeStructureServices = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
 const StudentClassServices = require("../modelAssociation/studentsClasses/studentsClassesServices");
+const GradeReviewsServices = require("../modelAssociation/gradeReviews/gradeReviewsServices");
 const {
   validateCreateClass,
   validateInvitation,
@@ -366,62 +368,16 @@ exports.getGradeBoard = async (req, res) => {
   const { classId } = req.params;
   try {
     //Check role
-    const isTeacher = await checkIsTeacherOfAClass(classId, req.user);
+    // const isTeacher = await checkIsTeacherOfAClass(classId, req.user);
 
-    if (!isTeacher)
-      return req.status(400).json({
-        success: false,
-        message: "Access denied",
-      });
+    // if (!isTeacher)
+    //   return req.status(400).json({
+    //     success: false,
+    //     message: "Access denied",
+    //   });
     //get grade structure list
-    const gradeStructureList =
-      await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
-    // //get average point
-    const averagePoint = await StudentClassServices.getAveragePointsOfOneClass(
-      classId
-    );
-
-    //GET All Virtual Student
-    const studentVirtualInClass =
-      await StudentClassServices.getAllVirtualStudent(classId);
-    //Get All Real Student
-    const realStudents = await classService.getAllStudentInClass(classId);
-    //Create new Student Classes if Not Exist
-    await Promise.all(
-      realStudents.map(async (student) => {
-        //console.log(student);
-        if (student.student_id == null) return;
-        const el = {
-          fullName: student.name,
-          ClassId: student.ClassId,
-          student_id: student.student_id,
-        };
-        // console.log({ el });
-        await StudentClassServices.CreateIfNotExistStudentsClasses(el);
-      })
-    );
-    //Map virtual student with real student
-    const allStudent = MapVirtualAndReadlStudent(
-      studentVirtualInClass,
-      realStudents
-    );
-
-    //get student import from DB
-    let studentGrades = [];
-    await Promise.all(
-      allStudent.map(async (el) => {
-        let result = await StudentClassServices.getAllCompositionStudent(
-          classId,
-          el.student_id
-        );
-        studentGrades.push(result);
-      })
-    );
-
-    //Caculate DTB of student
-    studentGrades = studentGrades.map((el) => {
-      return CaculateAverageOfEachStudent(el);
-    });
+    var { gradeStructureList, averagePoint, allStudent, studentGrades } =
+      await GetGradeBoardInfor(classId);
 
     res.json({
       success: true,
@@ -433,4 +389,94 @@ exports.getGradeBoard = async (req, res) => {
   } catch (error) {
     res.status(error.status || 501).json({ message: error.message });
   }
+};
+async function GetGradeBoardInfor(classId) {
+  const gradeStructureList =
+    await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
+  // //get average point
+  const averagePoint = await StudentClassServices.getAveragePointsOfOneClass(
+    classId
+  );
+
+  //GET All Virtual Student
+  const studentVirtualInClass = await StudentClassServices.getAllVirtualStudent(
+    classId
+  );
+  //Get All Real Student
+  const realStudents = await classService.getAllStudentInClass(classId);
+  //Create new Student Classes if Not Exist
+  await Promise.all(
+    realStudents.map(async (student) => {
+      //console.log(student);
+      if (student.student_id == null) return;
+      const el = {
+        fullName: student.name,
+        ClassId: student.ClassId,
+        student_id: student.student_id,
+      };
+      // console.log({ el });
+      await StudentClassServices.CreateIfNotExistStudentsClasses(el);
+    })
+  );
+  //Map virtual student with real student
+  const allStudent = MapVirtualAndReadlStudent(
+    studentVirtualInClass,
+    realStudents
+  );
+
+  //get student import from DB
+  let studentGrades = [];
+  await Promise.all(
+    allStudent.map(async (el) => {
+      let result = await StudentClassServices.getAllCompositionStudent(
+        classId,
+        el.student_id
+      );
+      studentGrades.push(result);
+    })
+  );
+
+  //Caculate DTB of student
+  studentGrades = studentGrades.map((el) => {
+    return CaculateAverageOfEachStudent(el);
+  });
+  return { gradeStructureList, averagePoint, allStudent, studentGrades };
+}
+
+exports.getStudentGrade = async (req, res) => {
+  const { classId } = req.params;
+  //Check role student of class
+  const check = await checkIsStudentOfAClass(classId, req.user);
+  if (!check) {
+    res.status(403).json({ success: false, message: "You are not allowed!" });
+    return;
+  }
+  if (req.user.student_id == null) {
+    res.status(403).json({
+      success: false,
+      message: "Please map your id before viewing scores",
+    });
+    return;
+  }
+  // req.user.student_id = 18120503;
+  let scores = await StudentClassServices.getAllCompositionStudent(
+    classId,
+    req.user.student_id
+  );
+  let index = 0;
+  await Promise.all(
+    scores.map(async (element) => {
+      const gradeReview = await GradeReviewsServices.findOneByStudentGradeId(
+        element.id
+      );
+      scores[index].gradeReview = gradeReview;
+      //console.log(element);
+      index++;
+      return element;
+    })
+  );
+  scores = CaculateAverageOfEachStudent(scores);
+
+  //console.log(req.user);
+  res.send(scores);
 };

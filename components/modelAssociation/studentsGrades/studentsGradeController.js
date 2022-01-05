@@ -57,3 +57,11 @@ module.exports.MakeAllGradeFinalize = async (req, res) => {
   );
   res.json({ success: true, Subject });
 };
+
+module.exports.MakeAsFinalDecision = async (req, res) => {
+  const data = req.body;
+
+  const result = await GradeService.MakeAsFinalDecision(data);
+
+  res.send(result);
+};

@@ -10,6 +10,7 @@ const classesRouter = require("./components/classes/classRouter");
 const usersRouter = require("./components/users/user.router");
 const authRouter = require("./components/auth/auth.router");
 const fileRouter = require("./components/files/fileRouter");
+const gradeReviewRouter = require("./components/modelAssociation/gradeReviews/gradeReviewsRouter");
 const studentsGradesRouter = require("./components/modelAssociation/studentsGrades/studentsGradesRouter");
 const passport = require("passport");
 const db = require("./config/db.config");
@@ -57,6 +58,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/files", fileRouter);
 app.use("/api/students-grades", studentsGradesRouter);
+app.use("/api/grade-review", gradeReviewRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

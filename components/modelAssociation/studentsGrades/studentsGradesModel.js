@@ -6,6 +6,12 @@ const StudentsClasses = require("../studentsClasses/studentsClassesModel");
 class StudentsGrades extends Model {}
 StudentsGrades.init(
   {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     studentsClasses_id: {
       type: DataTypes.INTEGER,
       references: {
@@ -25,6 +31,10 @@ StudentsGrades.init(
     },
     finalizedGrade: {
       type: DataTypes.FLOAT,
+    },
+    isFinalDecision: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {

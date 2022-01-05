@@ -10,6 +10,15 @@ exports.checkIsTeacherOfAClass = async (classId, user) => {
   });
   return res;
 };
+exports.checkIsStudentOfAClass = async (classId, user) => {
+  const clss = Class.build({ id: parseInt(classId) });
+  const res = await user.hasClass(clss, {
+    through: {
+      where: { role: "student" },
+    },
+  });
+  return res;
+};
 exports.checkIsMemberOfAClass = async (classId, user) => {
   try {
     const clss = Class.build({ id: parseInt(classId) });

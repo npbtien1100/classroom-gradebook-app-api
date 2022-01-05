@@ -12,4 +12,8 @@ router.put(
   "/mark-all-as-finalized",
   StudentsGradesController.MakeAllGradeFinalize
 );
+router.put(
+  "/mark-as-final-decision",
+  StudentsGradesController.MakeAsFinalDecision
+);
 module.exports = router;

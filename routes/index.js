@@ -73,6 +73,7 @@ router.get("/logout", function (req, res, next) {
 router.post("/api/login", async function (req, res, next) {
   try {
     const data = req.body;
+    //console.log(req.body);
     //Find User In DB
     const user = await UserServices.findOneByEmail(data.email);
     // console.log(user);
