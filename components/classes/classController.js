@@ -490,13 +490,6 @@ exports.getStudentGradeByTeacher = async (req, res) => {
     res.status(403).json({ success: false, message: "You are not allowed!" });
     return;
   }
-  if (req.user.student_id == null) {
-    res.status(403).json({
-      success: false,
-      message: "Please map your id before viewing scores",
-    });
-    return;
-  }
   let scores = await StudentClassServices.getAllCompositionStudent(
     classId,
     studentId
