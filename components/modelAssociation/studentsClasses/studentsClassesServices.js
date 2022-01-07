@@ -163,6 +163,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       "gradeTitle",
       "gradeDetail",
       "id",
+      "isFinalDecision",
     ];
     let rawGrades = await StudentsClasses.findAll({
       include: {
@@ -177,6 +178,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
         "classesGradeStructures.studentsGrades.gradeStructure_id",
         "classesGradeStructures.studentsGrades.grade",
         "classesGradeStructures.studentsGrades.finalizedGrade",
+        "classesGradeStructures.studentsGrades.isFinalDecision",
         "student_id",
         "classesGradeStructures.gradeTitle",
         "classesGradeStructures.gradeDetail",

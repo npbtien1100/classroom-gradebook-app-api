@@ -16,7 +16,7 @@ function MapGrade(rawGrades, AllGradeCompositions, student_id) {
     const len1 = rawGrades.length;
     for (let j = 0; j < len1; j++) {
       AllGradeCompositions[i].id = rawGrades[j].id;
-
+      AllGradeCompositions[i].isFinalDecision = rawGrades[j].isFinalDecision;
       if (
         AllGradeCompositions[i].gradeStructure_id ==
         rawGrades[j].gradeStructure_id
