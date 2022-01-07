@@ -3,6 +3,9 @@ const {
   gradeReviewCommentValidate,
 } = require("./gradeReviewValidate");
 const gradeReviewsServices = require("./gradeReviewsServices");
+const {
+  checkIsTeacherOfAClass,
+} = require("../usersClasses/usersClassesServices");
 
 exports.CreateNewRequestedReview = async (req, res) => {
   const data = req.body;
@@ -22,8 +25,10 @@ exports.CreateNewRequestedReview = async (req, res) => {
 };
 
 exports.GetOneGradeReview = async (req, res) => {
-  const { studentGrade_Id } = req.query;
+  const { studentGrade_Id, classId } = req.query;
   //console.log({ studentGrade_Id, query: req.query });
+  //Add user Role
+  const isTeacher = await checkIsTeacherOfAClass(classId, req.user);
 
   //Find One Student grade
   const studentGrade = await gradeReviewsServices.findOneStudentGrade(
@@ -34,7 +39,7 @@ exports.GetOneGradeReview = async (req, res) => {
     studentGrade_Id
   );
 
-  res.json({ studentGrade, gradeReview });
+  res.json({ isTeacher, studentGrade, gradeReview });
 };
 
 exports.CreateOneComment = async (req, res) => {
