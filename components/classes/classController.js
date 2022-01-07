@@ -4,6 +4,7 @@ const {
   checkIsStudentOfAClass,
 } = require("../modelAssociation/usersClasses/usersClassesServices");
 const classService = require("./classService");
+const userService = require("../users/user.service");
 const ClassesGradeStructureServices = require("../modelAssociation/classesGradeStructure/classesGradeStructureService");
 const StudentClassServices = require("../modelAssociation/studentsClasses/studentsClassesServices");
 const GradeReviewsServices = require("../modelAssociation/gradeReviews/gradeReviewsServices");
@@ -479,7 +480,7 @@ exports.getStudentGrade = async (req, res) => {
   scores = CaculateAverageOfEachStudent(scores);
 
   //console.log(req.user);
-  res.send(scores);
+  res.json({ scores });
 };
 exports.getStudentGradeByTeacher = async (req, res) => {
   const { studentId } = req.query;
@@ -490,10 +491,12 @@ exports.getStudentGradeByTeacher = async (req, res) => {
     res.status(403).json({ success: false, message: "You are not allowed!" });
     return;
   }
+  const user = await userService.findUserByStudentId(studentId);
   let scores = await StudentClassServices.getAllCompositionStudent(
     classId,
     studentId
   );
+
   let index = 0;
   await Promise.all(
     scores.map(async (element) => {
@@ -509,5 +512,5 @@ exports.getStudentGradeByTeacher = async (req, res) => {
   scores = CaculateAverageOfEachStudent(scores);
 
   //console.log(req.user);
-  res.send(scores);
+  res.json({ user, scores });
 };

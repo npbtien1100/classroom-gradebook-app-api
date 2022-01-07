@@ -70,6 +70,16 @@ exports.findOneById = async (Id) => {
     console.error(error);
   }
 };
+exports.findUserByStudentId = async (Id) => {
+  try {
+    const foundUser = await User.findOne({
+      where: { student_id: Id },
+    });
+    return foundUser;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 exports.updateUser = async (userID, attributeObject) => {
   try {

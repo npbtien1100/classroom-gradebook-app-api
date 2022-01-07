@@ -200,6 +200,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       raw: true,
     });
 
+    if (studentsClasses_id == null) return [];
     //Create All grades composition
     const AllGradeCompositions = CreateAllGradeCompositions(
       grade_structure_list,
