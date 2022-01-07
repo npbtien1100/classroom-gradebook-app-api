@@ -120,6 +120,7 @@ exports.getAllPeopleInClass = async (req, res) => {
       "id",
       "name",
       "image",
+      "student_id",
     ]);
     res.json(people);
   } catch (error) {
