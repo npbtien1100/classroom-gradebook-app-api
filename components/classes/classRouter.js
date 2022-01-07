@@ -69,7 +69,7 @@ router.get(
 
 router.get(
   "/:classId/students-gradeboard",
-  //authenticateByJwt,
+  authenticateByJwt,
   classController.getGradeBoard
 );
 
@@ -77,6 +77,11 @@ router.get(
   "/:classId/student-grade",
   authenticateByJwt,
   classController.getStudentGrade
+);
+router.get(
+  "/:classId/student-shortened-grade",
+  authenticateByJwt,
+  classController.getStudentGradeByTeacher
 );
 
 module.exports = router;

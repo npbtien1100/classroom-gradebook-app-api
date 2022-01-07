@@ -109,6 +109,7 @@ module.exports.MakeAsFinalDecision = async (data) => {
     if (foundGrade == null || foundGrade.isFinalDecision == true)
       return { success: false, message: "..." };
     foundGrade.finalizedGrade = data.grade;
+    foundGrade.grade = data.grade;
     foundGrade.isFinalDecision = true;
     const result = await foundGrade.save();
     return { success: true, message: result };

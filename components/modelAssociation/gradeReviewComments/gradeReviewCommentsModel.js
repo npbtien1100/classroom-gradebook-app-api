@@ -38,16 +38,20 @@ GradeReviewComments.init(
 );
 User.hasMany(GradeReviewComments, {
   foreignKey: "userId",
+  onDelete: "CASCADE",
 });
 GradeReviewComments.belongsTo(User, {
   foreignKey: "userId",
+  onDelete: "CASCADE",
 });
 
 GradeReviews.hasMany(GradeReviewComments, {
   foreignKey: "gradeReviewId",
+  onDelete: "CASCADE",
 });
 GradeReviewComments.belongsTo(GradeReviews, {
   foreignKey: "gradeReviewId",
+  onDelete: "CASCADE",
 });
 
 module.exports = GradeReviewComments;

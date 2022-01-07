@@ -480,3 +480,40 @@ exports.getStudentGrade = async (req, res) => {
   //console.log(req.user);
   res.send(scores);
 };
+exports.getStudentGradeByTeacher = async (req, res) => {
+  const { studentId } = req.query;
+  const { classId } = req.params;
+  //Check role student of class
+  const check = await checkIsTeacherOfAClass(classId, req.user);
+  if (!check) {
+    res.status(403).json({ success: false, message: "You are not allowed!" });
+    return;
+  }
+  if (req.user.student_id == null) {
+    res.status(403).json({
+      success: false,
+      message: "Please map your id before viewing scores",
+    });
+    return;
+  }
+  let scores = await StudentClassServices.getAllCompositionStudent(
+    classId,
+    studentId
+  );
+  let index = 0;
+  await Promise.all(
+    scores.map(async (element) => {
+      const gradeReview = await GradeReviewsServices.findOneByStudentGradeId(
+        element.id
+      );
+      scores[index].gradeReview = gradeReview;
+      //console.log(element);
+      index++;
+      return element;
+    })
+  );
+  scores = CaculateAverageOfEachStudent(scores);
+
+  //console.log(req.user);
+  res.send(scores);
+};
