@@ -5,6 +5,7 @@ const StudentsClasses = require("../studentsClasses/studentsClassesModel");
 const StudentsGrades = require("../studentsGrades/studentsGradesModel");
 const ClassGradeStructure = require("../classesGradeStructure/classesGradeStructureModel");
 const ClassesGradeStructure = require("../classesGradeStructure/classesGradeStructureModel");
+const { Sequelize } = require("sequelize");
 
 module.exports.createGradeReview = async (data) => {
   try {
@@ -47,6 +48,7 @@ module.exports.findOneGradeReviewWithComments = async (studentGrade_Id) => {
       where: {
         studentGrade_Id: studentGrade_Id,
       },
+      order: [["GradeReviewComments", "createdAt", "ASC"]],
       raw: true,
       nest: true,
     });
@@ -86,14 +88,20 @@ module.exports.getAllStudentGradeOfOneClass = async (classId) => {
 };
 module.exports.findOneStudentGrade = async (studentGrade_Id) => {
   try {
-    const result = await StudentsGrades.findOne({
-      where: {
-        id: studentGrade_Id,
-      },
+    const result = await StudentsClasses.findAll({
+      include: [
+        {
+          model: ClassGradeStructure,
+          as: "classesGradeStructures",
+          where: {
+            "$classesGradeStructures.studentsGrades.id$": studentGrade_Id,
+          },
+        },
+      ],
     });
     return result;
   } catch (error) {
-    //console.log(error);
+    console.log(error);
     return { success: false, message: error };
   }
 };
