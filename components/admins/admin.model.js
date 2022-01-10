@@ -4,17 +4,24 @@ const sequelize = require("../../config/db.config");
 class Admin extends Model {}
 Admin.init(
   {
-    name: {
+    fullName: {
       type: DataTypes.STRING,
-      defaultValue: "",
-    },
-    password: {
-      type: DataTypes.STRING,
-      defaultValue: "",
+      allowNull: false,
     },
     email: {
       type: DataTypes.STRING,
-      defaultValue: "",
+      unique: true,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.STRING,
+    },
+    phone: {
+      type: DataTypes.STRING,
     },
   },
   {

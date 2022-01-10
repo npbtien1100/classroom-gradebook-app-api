@@ -60,7 +60,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/files", fileRouter);
 app.use("/api/students-grades", studentsGradesRouter);
 app.use("/api/grade-review", gradeReviewRouter);
-app.use("/api/admin/", AdminRouter);
+app.use("/api/admin", AdminRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

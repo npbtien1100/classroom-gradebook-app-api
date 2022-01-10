@@ -10,6 +10,7 @@ User.init(
     },
     student_id: {
       type: DataTypes.INTEGER,
+      unique: true,
     },
     image: {
       type: DataTypes.STRING(300),
