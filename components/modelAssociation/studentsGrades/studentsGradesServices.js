@@ -1,5 +1,8 @@
 const { Op } = require("sequelize");
 const StudentsGrades = require("./studentsGradesModel");
+const StudentsClasses = require("../studentsClasses/studentsClassesModel");
+const ClassesGradeStructure = require("../classesGradeStructure/classesGradeStructureModel");
+const NotificationServices = require("../notifications/notificationsServices");
 
 module.exports.updateGrade = async (condition, newvalue) => {
   try {
@@ -67,8 +70,30 @@ module.exports.makeOneGradeFinalize = async (data) => {
       return { success: false, message: "..." };
     foundGrade.finalizedGrade = foundGrade.grade;
     const result = await foundGrade.save();
+    //----Notify for student
+    //Find student
+    const found = await findStudentByStudentGrades(
+      data.studentsClasses_id,
+      data.gradeStructure_id
+    );
+    //console.log({ found });
+    //Notify
+    const content = {
+      class_id: found[0].ClassId,
+      content:
+        "A teacher finalizes a grade composition in grade structure:  " +
+        found[0].classesGradeStructures.gradeTitle +
+        " in class " +
+        found[0].ClassId,
+    };
+    console.log({ content });
+    await NotificationServices.CreateNotificationByStudentId(
+      found[0].student_id,
+      content
+    );
     return { success: true, message: result };
   } catch (error) {
+    console.log(error);
     return error;
   }
 };
@@ -112,8 +137,59 @@ module.exports.MakeAsFinalDecision = async (data) => {
     foundGrade.grade = data.grade;
     foundGrade.isFinalDecision = true;
     const result = await foundGrade.save();
+    //Find student
+    const found = await findStudentByStudentGrades(data.studentGrade_Id);
+    console.log({ found });
+    //Notify
+    const content = {
+      class_id: found[0].ClassId,
+      content:
+        "teacher creates a final decision on a mark review in grade structure:  " +
+        found[0].classesGradeStructures.gradeTitle +
+        " in class " +
+        found[0].ClassId,
+    };
+    console.log({ content });
+    await NotificationServices.CreateNotificationByStudentId(
+      found[0].student_id,
+      content
+    );
     return { success: true, message: result };
   } catch (error) {
+    console.log(error);
     return error;
+  }
+};
+
+findStudentByStudentGrades = async (a1, a2) => {
+  try {
+    let result;
+    if (a2 == null || a2 == undefined)
+      result = await StudentsClasses.findAll({
+        include: {
+          model: ClassesGradeStructure,
+          where: {
+            "$classesGradeStructures.studentsGrades.id$": a1,
+          },
+        },
+        raw: true,
+        nest: true,
+      });
+    else
+      result = await StudentsClasses.findAll({
+        include: {
+          model: ClassesGradeStructure,
+          where: {
+            "$classesGradeStructures.studentsGrades.studentsClasses_id$": a1,
+            "$classesGradeStructures.studentsGrades.gradeStructure_id$": a2,
+          },
+        },
+        raw: true,
+        nest: true,
+      });
+
+    return result;
+  } catch (error) {
+    console.log(error);
   }
 };

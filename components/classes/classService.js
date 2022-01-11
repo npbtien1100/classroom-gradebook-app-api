@@ -495,3 +495,25 @@ exports.getAllStudentInClass = async (classId) => {
     console.error(error);
   }
 };
+
+exports.getAllTeacherInClass = async (classID) => {
+  try {
+    const foundTeacher = Class.findAll({
+      where: {
+        id: classID,
+      },
+      include: {
+        model: User,
+        where: {
+          "$users.usersclasses.role$": "teacher",
+        },
+      },
+      raw: true,
+      nest: true,
+    });
+    return foundTeacher;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};

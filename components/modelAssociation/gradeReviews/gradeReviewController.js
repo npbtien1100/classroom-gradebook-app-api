@@ -45,7 +45,7 @@ exports.GetOneGradeReview = async (req, res) => {
 exports.CreateOneComment = async (req, res) => {
   const data = req.body;
   data.userId = req.user.id;
-  console.log(data);
+  //console.log(data);
   const validated = gradeReviewCommentValidate(data);
   if (validated.error != null)
     return res.status(400).json({

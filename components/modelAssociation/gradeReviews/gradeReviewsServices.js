@@ -62,6 +62,8 @@ module.exports.findOneGradeReviewWithComments = async (studentGrade_Id) => {
 module.exports.createNewComment = async (data) => {
   try {
     const result = await GradeReviewComments.create(data);
+    //Notifi for student for student
+
     return result;
   } catch (error) {
     //console.log(error);
