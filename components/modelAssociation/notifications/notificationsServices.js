@@ -12,6 +12,7 @@ module.exports.getNotificationsOfStudentByPage = async (userId, page) => {
       },
       limit: pageSize,
       offset: pageSize * page,
+      order: [["createdAt", "ASC"]],
     });
     return { success: true, notifications };
   } catch (error) {
