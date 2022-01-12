@@ -18,6 +18,10 @@ router.get("/", authenticateByJwt, async (req, res) => {
   );
   res.json(result);
 });
-//router.post("/", NotificationController);
+router.put("/", async (req, res) => {
+  const { id } = req.body;
+  const result = await NotificationServices.SetSeenNotification(id);
+  res.json({ result });
+});
 
 module.exports = router;

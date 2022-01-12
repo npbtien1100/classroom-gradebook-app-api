@@ -15,6 +15,10 @@ Notification.init(
       type: DataTypes.STRING,
       defaultValue: "",
     },
+    IsSeen: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,

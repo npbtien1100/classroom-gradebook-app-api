@@ -64,3 +64,16 @@ module.exports.CreateNotificationForTeacher = async (foundGrade, content) => {
     return { success: false, error };
   }
 };
+
+module.exports.SetSeenNotification = async (id) => {
+  try {
+    const notification = await Notification.findOne({ id: id });
+    if (notification == null) return null;
+    notification.IsSeen = true;
+    (await notification).save();
+    return notification;
+  } catch (error) {
+    console.log(error);
+    return { success: false, error };
+  }
+};
