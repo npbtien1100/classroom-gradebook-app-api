@@ -31,13 +31,35 @@ module.exports.CreateNotificationByStudentId = async (studentId, content) => {
   }
 };
 
-module.exports.CreateNotificationForTeacher = async (classId, content) => {
+module.exports.CreateNotificationForTeacher = async (foundGrade, content) => {
   try {
-    console.log({ classId });
-    const teachers = await ClassServices.getAllTeacherInClass(classId);
+    console.log({ foundGrade });
+    const classTeacher = await ClassServices.getAllTeacherInClass(
+      foundGrade.classesGradeStructures.ClassId
+    );
+    console.log({ classTeacher });
     //Duyet qua all
-    return teachers;
+    await Promise.all(
+      classTeacher.map(async (teacher) => {
+        const content = {
+          user_id: teacher.users.id,
+          class_id: foundGrade.classesGradeStructures.ClassId,
+          content:
+            "Student " +
+            foundGrade.student_id +
+            " - " +
+            foundGrade.fullName +
+            " request grade review in grade structure " +
+            foundGrade.classesGradeStructures.gradeTitle +
+            " in class  " +
+            teacher.className,
+        };
+        await Notification.create(content);
+      })
+    );
+    return classTeacher;
   } catch (error) {
+    console.log(error);
     return { success: false, error };
   }
 };

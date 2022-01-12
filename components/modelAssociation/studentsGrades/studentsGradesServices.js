@@ -3,6 +3,7 @@ const StudentsGrades = require("./studentsGradesModel");
 const StudentsClasses = require("../studentsClasses/studentsClassesModel");
 const ClassesGradeStructure = require("../classesGradeStructure/classesGradeStructureModel");
 const NotificationServices = require("../notifications/notificationsServices");
+const classServices = require("../../classes/classService");
 
 module.exports.updateGrade = async (condition, newvalue) => {
   try {
@@ -66,27 +67,31 @@ module.exports.makeOneGradeFinalize = async (data) => {
         ],
       },
     });
+    console.log({ foundGrade });
     if (foundGrade == null || foundGrade.isFinalDecision == true)
       return { success: false, message: "..." };
     foundGrade.finalizedGrade = foundGrade.grade;
     const result = await foundGrade.save();
     //----Notify for student
     //Find student
-    const found = await findStudentByStudentGrades(
+    const found = await this.findStudentByStudentGrades(
       data.studentsClasses_id,
       data.gradeStructure_id
     );
-    //console.log({ found });
+    console.log({ found });
     //Notify
+    const foundClass = await classServices.getOneClassByClassID(
+      found[0].ClassId
+    );
     const content = {
       class_id: found[0].ClassId,
       content:
-        "A teacher finalizes a grade composition in grade structure:  " +
+        "Your " +
         found[0].classesGradeStructures.gradeTitle +
-        " in class " +
-        found[0].ClassId,
+        " grade has been marked finalized in class  " +
+        foundClass.className,
     };
-    console.log({ content });
+    // console.log({ content });
     await NotificationServices.CreateNotificationByStudentId(
       found[0].student_id,
       content
@@ -138,16 +143,20 @@ module.exports.MakeAsFinalDecision = async (data) => {
     foundGrade.isFinalDecision = true;
     const result = await foundGrade.save();
     //Find student
-    const found = await findStudentByStudentGrades(data.studentGrade_Id);
+    const found = await this.findStudentByStudentGrades(data.studentGrade_Id);
     console.log({ found });
+
     //Notify
+    const foundClass = await classServices.getOneClassByClassID(
+      found[0].ClassId
+    );
     const content = {
       class_id: found[0].ClassId,
       content:
-        "teacher creates a final decision on a mark review in grade structure:  " +
+        "Your " +
         found[0].classesGradeStructures.gradeTitle +
-        " in class " +
-        found[0].ClassId,
+        " grade has been marked final decision in class  " +
+        foundClass.className,
     };
     console.log({ content });
     await NotificationServices.CreateNotificationByStudentId(
@@ -161,7 +170,7 @@ module.exports.MakeAsFinalDecision = async (data) => {
   }
 };
 
-findStudentByStudentGrades = async (a1, a2) => {
+module.exports.findStudentByStudentGrades = async (a1, a2) => {
   try {
     let result;
     if (a2 == null || a2 == undefined)

@@ -53,6 +53,17 @@ exports.getOneClassByID = async (classID, arrayAttributes, userID) => {
     console.error(error);
   }
 };
+exports.getOneClassByClassID = async (classID) => {
+  try {
+    const foundClass = await Class.findOne({
+      where: { id: classID },
+    });
+    return foundClass;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 exports.getAllClasses = async (arrayAttributes, options, user) => {
   try {
     const { orderOption } = options;
