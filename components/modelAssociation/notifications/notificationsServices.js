@@ -1,5 +1,5 @@
 const Notification = require("./notificationsModel");
-const pageSize = 10;
+const pageSize = 5;
 const UserServices = require("../../users/user.service");
 const ClassServices = require("../../classes/classService");
 module.exports.getNotificationsOfStudentByPage = async (userId, page) => {
