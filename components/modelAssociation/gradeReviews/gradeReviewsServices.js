@@ -41,9 +41,9 @@ module.exports.createNewComment = async (data, req) => {
     const content = {
       class_id: found[0].ClassId,
       content:
-        "You have a comment in grade structure :  " +
+        "You have a comment in :  " +
         found[0].classesGradeStructures.gradeTitle +
-        " in class  " +
+        " in class " +
         foundClass.className,
     };
     console.log({ content });

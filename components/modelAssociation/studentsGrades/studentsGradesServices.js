@@ -88,7 +88,7 @@ module.exports.makeOneGradeFinalize = async (data) => {
       content:
         "Your " +
         found[0].classesGradeStructures.gradeTitle +
-        " grade has been marked finalized in class  " +
+        " grade has been finalized in " +
         foundClass.className,
     };
     // console.log({ content });
@@ -155,7 +155,7 @@ module.exports.MakeAsFinalDecision = async (data) => {
       content:
         "Your " +
         found[0].classesGradeStructures.gradeTitle +
-        " grade has been marked final decision in class  " +
+        " grade received a final decision in " +
         foundClass.className,
     };
     console.log({ content });
