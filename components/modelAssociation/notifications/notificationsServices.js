@@ -12,7 +12,7 @@ module.exports.getNotificationsOfStudentByPage = async (userId, page) => {
       },
       limit: pageSize,
       offset: pageSize * page,
-      order: [["createdAt", "ASC"]],
+      order: [["createdAt", "DESC"]],
     });
     return { success: true, notifications };
   } catch (error) {
@@ -46,13 +46,12 @@ module.exports.CreateNotificationForTeacher = async (foundGrade, content) => {
           user_id: teacher.users.id,
           class_id: foundGrade.classesGradeStructures.ClassId,
           content:
-            "Student " +
             foundGrade.student_id +
             " - " +
             foundGrade.fullName +
-            " request grade review in grade structure " +
+            " requested grade review for " +
             foundGrade.classesGradeStructures.gradeTitle +
-            " in class  " +
+            " in " +
             teacher.className,
         };
         await Notification.create(content);
