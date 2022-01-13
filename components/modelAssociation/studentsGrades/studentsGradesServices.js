@@ -169,36 +169,3 @@ module.exports.MakeAsFinalDecision = async (data) => {
     return error;
   }
 };
-
-module.exports.findStudentByStudentGrades = async (a1, a2) => {
-  try {
-    let result;
-    if (a2 == null || a2 == undefined)
-      result = await StudentsClasses.findAll({
-        include: {
-          model: ClassesGradeStructure,
-          where: {
-            "$classesGradeStructures.studentsGrades.id$": a1,
-          },
-        },
-        raw: true,
-        nest: true,
-      });
-    else
-      result = await StudentsClasses.findAll({
-        include: {
-          model: ClassesGradeStructure,
-          where: {
-            "$classesGradeStructures.studentsGrades.studentsClasses_id$": a1,
-            "$classesGradeStructures.studentsGrades.gradeStructure_id$": a2,
-          },
-        },
-        raw: true,
-        nest: true,
-      });
-
-    return result;
-  } catch (error) {
-    console.log(error);
-  }
-};

@@ -65,3 +65,8 @@ module.exports.MakeAsFinalDecision = async (req, res) => {
 
   res.send(result);
 };
+
+module.exports.ConfigDB = async (req, res) => {
+  const result = await GradeService.configDB();
+  res.json({ result });
+};

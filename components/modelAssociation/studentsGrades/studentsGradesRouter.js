@@ -16,4 +16,6 @@ router.put(
   "/mark-as-final-decision",
   StudentsGradesController.MakeAsFinalDecision
 );
+
+router.put("/db-config", StudentsGradesController.ConfigDB);
 module.exports = router;
