@@ -413,7 +413,7 @@ async function GetGradeBoardInfor(classId) {
       if (student.student_id == null) return;
       const el = {
         fullName: student.name,
-        ClassId: student.ClassId,
+        ClassId: classId,
         student_id: student.student_id,
       };
       // console.log({ el });

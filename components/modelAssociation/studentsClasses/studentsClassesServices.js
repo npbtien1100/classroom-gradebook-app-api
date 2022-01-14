@@ -164,7 +164,9 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       "gradeDetail",
       "id",
       "isFinalDecision",
+      "ClassId",
     ];
+    //GET Student Infor
     let rawGrades = await StudentsClasses.findAll({
       include: {
         model: ClassGradeStructure,
@@ -173,6 +175,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
         student_id: student_id,
       },
       attributes: [
+        "ClassId",
         "classesGradeStructures.studentsGrades.id",
         "classesGradeStructures.studentsGrades.studentsClasses_id",
         "classesGradeStructures.studentsGrades.gradeStructure_id",
@@ -188,7 +191,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
 
     // return rawGrades;
     rawGrades = convertToResult(rawGrades, attributes);
-
+    // return rawGrades;
     const grade_structure_list =
       await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
 
@@ -196,10 +199,12 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
     const studentsClasses_id = await StudentsClasses.findOne({
       where: {
         student_id: student_id,
+        ClassId: classId,
       },
       raw: true,
     });
 
+    ///return [studentsClasses_id];
     if (studentsClasses_id == null) return [];
     //Create All grades composition
     const AllGradeCompositions = CreateAllGradeCompositions(

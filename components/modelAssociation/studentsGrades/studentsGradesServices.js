@@ -48,8 +48,10 @@ module.exports.createOrUpdateGrade = async (data) => {
         ],
       },
     });
-    if (foundGrade != null)
+    if (foundGrade != null) {
+      //console.log("CREATE");
       return await this.updateGrade(data, { grade: data.grade });
+    }
     return await this.createGrade(data);
   } catch (error) {
     //console.log(error);
@@ -78,13 +80,14 @@ module.exports.makeOneGradeFinalize = async (data) => {
       data.studentsClasses_id,
       data.gradeStructure_id
     );
+    //return { found };
     console.log({ found });
     //Notify
     const foundClass = await classServices.getOneClassByClassID(
-      found[0].ClassId
+      found[0].classesGradeStructures.ClassId
     );
     const content = {
-      class_id: found[0].ClassId,
+      class_id: found[0].classesGradeStructures.ClassId,
       content:
         "Your " +
         found[0].classesGradeStructures.gradeTitle +
@@ -148,10 +151,10 @@ module.exports.MakeAsFinalDecision = async (data) => {
 
     //Notify
     const foundClass = await classServices.getOneClassByClassID(
-      found[0].ClassId
+      found[0].classesGradeStructures.ClassId
     );
     const content = {
-      class_id: found[0].ClassId,
+      class_id: found[0].classesGradeStructures.ClassId,
       content:
         "Your " +
         found[0].classesGradeStructures.gradeTitle +

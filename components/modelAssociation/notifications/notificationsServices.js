@@ -36,7 +36,7 @@ module.exports.CreateNotificationForTeacher = async (foundGrade, content) => {
   try {
     console.log({ foundGrade });
     const classTeacher = await ClassServices.getAllTeacherInClass(
-      foundGrade.ClassId
+      foundGrade.classesGradeStructures.ClassId
     );
     console.log({ classTeacher });
     //Duyet qua all
@@ -44,7 +44,7 @@ module.exports.CreateNotificationForTeacher = async (foundGrade, content) => {
       classTeacher.map(async (teacher) => {
         const content = {
           user_id: teacher.users.id,
-          class_id: foundGrade.ClassId,
+          class_id: foundGrade.classesGradeStructures.ClassId,
           content:
             foundGrade.student_id +
             " - " +
