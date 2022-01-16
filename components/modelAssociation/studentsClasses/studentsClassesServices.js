@@ -200,6 +200,7 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       raw: true,
     });
 
+    if (studentsClassesInfo == null) return [];
     //Grate structure
     const grade_structure_list =
       await ClassesGradeStructureServices.getAllClassGradeStructure(classId);

@@ -465,6 +465,7 @@ exports.getStudentGrade = async (req, res) => {
     classId,
     req.user.student_id
   );
+  console.log({ scores });
   let index = 0;
   await Promise.all(
     scores.map(async (element) => {
