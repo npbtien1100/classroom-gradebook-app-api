@@ -395,7 +395,7 @@ exports.getGradeBoard = async (req, res) => {
 async function GetGradeBoardInfor(classId) {
   const gradeStructureList =
     await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
-  // //get average point
+  //get average point
   const averagePoint = await StudentClassServices.getAveragePointsOfOneClass(
     classId
   );
