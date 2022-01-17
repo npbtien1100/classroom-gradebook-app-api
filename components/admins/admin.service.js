@@ -1,3 +1,4 @@
+const sequelize = require("../../config/db.config");
 const Class = require("../classes/classModel");
 const User = require("../users/use.model");
 const Admin = require("./admin.model");
@@ -99,8 +100,29 @@ exports.updateAUser = async (userId, data) => {
 
 exports.getAllClasses = async () => {
   try {
-    const classList = await Class.findAll({ order: [["id", "DESC"]] });
-    return classList;
+    const classList = await Class.findAll({
+      order: [["id", "DESC"]],
+      include: {
+        model: User,
+        attributes: ["id", "name"],
+        through: { attributes: [] },
+      },
+    });
+    const clssList = classList.map((ele) => {
+      return {
+        className: ele.className,
+        classSection: ele.classSection,
+        createdAt: ele.createdAt,
+        id: ele.id,
+        room: ele.room,
+        studentJoinCode: ele.studentJoinCode,
+        subject: ele.subject,
+        teacherJoinCode: ele.teacherJoinCode,
+        updatedAt: ele.updatedAt,
+        total_members: ele.users.length,
+      };
+    });
+    return clssList;
   } catch (error) {
     console.error(error);
     return {
