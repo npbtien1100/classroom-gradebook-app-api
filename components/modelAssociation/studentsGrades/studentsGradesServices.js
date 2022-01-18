@@ -181,7 +181,7 @@ module.exports.findStudentByStudentGrades = async (a1, a2) => {
         include: {
           model: ClassesGradeStructure,
           where: {
-            "$classesGradeStructures.studentsGrades.id$": a1,
+            "$classesgradestructures.studentsgrades.id$": a1,
           },
         },
         raw: true,
@@ -192,8 +192,8 @@ module.exports.findStudentByStudentGrades = async (a1, a2) => {
         include: {
           model: ClassesGradeStructure,
           where: {
-            "$classesGradeStructures.studentsGrades.studentsClasses_id$": a1,
-            "$classesGradeStructures.studentsGrades.gradeStructure_id$": a2,
+            "$classesgradestructures.studentsgrades.studentsclasses_id$": a1,
+            "$classesgradestructures.studentsgrades.gradestructure_id$": a2,
           },
         },
         raw: true,

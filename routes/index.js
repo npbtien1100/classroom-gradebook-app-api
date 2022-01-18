@@ -67,9 +67,9 @@ router.post("/api/register", async function (req, res, next) {
     message: result,
   });
 });
-router.get("/logout", function (req, res, next) {
-  res.render("index", { title: "Express" });
-});
+// router.get("/logout", function (req, res, next) {
+//   res.render("index", { title: "Express" });
+// });
 router.post("/api/login", async function (req, res, next) {
   try {
     const data = req.body;

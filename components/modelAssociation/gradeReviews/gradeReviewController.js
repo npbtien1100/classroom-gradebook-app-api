@@ -64,9 +64,9 @@ exports.GetListGradeReviewOfClass = async (req, res) => {
   await Promise.all(
     AllStudentGrade.map(async (element) => {
       //console.log(element["classesGradeStructures.studentsGrades.id"]);
-      if (element["studentsClasses.studentsGrades.id"] == null) return;
+      if (element["studentsclasses.studentsgrades.id"] == null) return;
       const gradeReview = await gradeReviewsServices.findOneByStudentGradeId(
-        element["studentsClasses.studentsGrades.id"]
+        element["studentsclasses.studentsgrades.id"]
       );
       //console.log(gradeReview);
       if (gradeReview != null) {

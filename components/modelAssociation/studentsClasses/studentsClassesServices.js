@@ -56,7 +56,7 @@ module.exports.getAveragePointsOfOneClass = async (classId) => {
         [
           Sequelize.fn(
             "avg",
-            Sequelize.col("studentsClasses.studentsGrades.finalizedGrade")
+            Sequelize.col("studentsClasses.studentsgrades.finalizedGrade")
           ),
           "averagePoint",
         ],
@@ -177,21 +177,22 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       },
       attributes: [
         "ClassId",
-        "classesGradeStructures.studentsGrades.id",
-        "classesGradeStructures.studentsGrades.studentsClasses_id",
-        "classesGradeStructures.studentsGrades.gradeStructure_id",
-        "classesGradeStructures.studentsGrades.grade",
-        "classesGradeStructures.studentsGrades.finalizedGrade",
-        "classesGradeStructures.studentsGrades.isFinalDecision",
+        "classesgradestructures.studentsgrades.id",
+        "classesgradestructures.studentsgrades.studentsClasses_id",
+        "classesgradestructures.studentsgrades.gradeStructure_id",
+        "classesgradestructures.studentsgrades.grade",
+        "classesgradestructures.studentsgrades.finalizedGrade",
+        "classesgradestructures.studentsgrades.isFinalDecision",
         "student_id",
-        "classesGradeStructures.gradeTitle",
-        "classesGradeStructures.gradeDetail",
+        "classesgradestructures.gradeTitle",
+        "classesgradestructures.gradeDetail",
       ],
       raw: true,
     });
 
     rawGrades = convertToResult(rawGrades, attributes);
     //return rawGrades;
+    //Get student Infor
     const studentsClassesInfo = await StudentsClasses.findOne({
       where: {
         student_id: student_id,
@@ -210,9 +211,6 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       grade_structure_list,
       studentsClassesInfo
     );
-
-    //Get student Infor
-
     //Map them
     const finalResult = MapGrade(rawGrades, AllGradeCompositions);
 

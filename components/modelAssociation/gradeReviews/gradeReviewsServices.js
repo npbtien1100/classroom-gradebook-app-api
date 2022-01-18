@@ -102,7 +102,7 @@ module.exports.findOneGradeReviewWithComments = async (studentGrade_Id) => {
       where: {
         studentGrade_Id: studentGrade_Id,
       },
-      order: [["GradeReviewComments", "createdAt", "ASC"]],
+      order: [["gradereviewcomments", "createdAt", "ASC"]],
       raw: true,
       nest: true,
     });
@@ -136,9 +136,9 @@ module.exports.findOneStudentGrade = async (studentGrade_Id) => {
       include: [
         {
           model: ClassGradeStructure,
-          as: "classesGradeStructures",
+          as: "classesgradestructures",
           where: {
-            "$classesGradeStructures.studentsGrades.id$": studentGrade_Id,
+            "$classesgradestructures.studentsgrades.id$": studentGrade_Id,
           },
         },
       ],
