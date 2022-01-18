@@ -40,6 +40,7 @@ const whitelist = [
   "http://localhost:3000",
   process.env.URL_FRONT_END,
   process.env.URL_WEB,
+  process.env.URL_WEB_ADMIN,
 ];
 const corsOptions = {
   origin: function (origin, callback) {
