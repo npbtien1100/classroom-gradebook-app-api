@@ -472,10 +472,19 @@ exports.getStudentGrade = async (req, res) => {
       const gradeReview = await GradeReviewsServices.findOneByStudentGradeId(
         element.id
       );
-      if (gradeReview == null) return;
-      for (let index = 0; index < scores.length; index++) {
-        if (scores[index].id == gradeReview.studentGrade_Id)
-          scores[index].gradeReview = gradeReview;
+      if (gradeReview != null) {
+        for (let index = 0; index < scores.length; index++) {
+          if (scores[index].id == gradeReview.studentGrade_Id)
+            scores[index].gradeReview = gradeReview;
+        }
+      } else {
+        for (let index = 0; index < scores.length; index++) {
+          if (
+            scores[index].gradeReview == null ||
+            scores[index].gradeReview == undefined
+          )
+            scores[index].gradeReview = null;
+        }
       }
       //console.log(element);
 
