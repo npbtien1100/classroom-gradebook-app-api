@@ -192,8 +192,8 @@ module.exports.findStudentByStudentGrades = async (a1, a2) => {
         include: {
           model: ClassesGradeStructure,
           where: {
-            "$classesgradestructures.studentsgrades.studentsclasses_id$": a1,
-            "$classesgradestructures.studentsgrades.gradestructure_id$": a2,
+            "$classesgradestructures.studentsgrades.studentsClasses_id$": a1,
+            "$classesgradestructures.studentsgrades.gradeStructure_id$": a2,
           },
         },
         raw: true,
