@@ -33,7 +33,7 @@ GradeReviewComments.init(
   },
   {
     sequelize,
-    modelName: "GradeReviewComments",
+    modelName: "gradereviewcomments",
   }
 );
 User.hasMany(GradeReviewComments, {

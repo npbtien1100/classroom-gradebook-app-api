@@ -24,20 +24,18 @@ GradeReviews.init(
   },
   {
     sequelize,
-    modelName: "GradeReviews",
+    modelName: "gradereviews",
   }
 );
 
 GradeReviews.belongsTo(StudentsGrades, {
   foreignKey: "studentGrade_Id",
   onDelete: "cascade",
-  hooks: true,
 });
 
 StudentsGrades.hasOne(GradeReviews, {
   foreignKey: "studentGrade_Id",
   onDelete: "cascade",
-  hooks: true,
 });
 
 module.exports = GradeReviews;

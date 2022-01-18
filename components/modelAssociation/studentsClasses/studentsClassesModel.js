@@ -32,7 +32,7 @@ StudentsClasses.init(
   },
   {
     sequelize,
-    modelName: "studentsClasses",
+    modelName: "studentsclasses",
   }
 );
 

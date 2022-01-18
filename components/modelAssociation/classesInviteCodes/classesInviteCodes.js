@@ -19,7 +19,7 @@ ClassesInviteCodes.init(
   },
   {
     sequelize,
-    modelName: "ClassesInviteCodes",
+    modelName: "classesinvitecodes",
     paranoid: true,
   }
 );

@@ -39,7 +39,7 @@ StudentsGrades.init(
   },
   {
     sequelize,
-    modelName: "studentsGrades",
+    modelName: "studentsgrades",
   }
 );
 StudentsClasses.belongsToMany(ClassesGradeStructure, {

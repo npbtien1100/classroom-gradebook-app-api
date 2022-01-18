@@ -26,7 +26,7 @@ ClassesGradeStructure.init(
   },
   {
     sequelize,
-    modelName: "classesGradeStructure",
+    modelName: "classesgradestructure",
   }
 );
 
