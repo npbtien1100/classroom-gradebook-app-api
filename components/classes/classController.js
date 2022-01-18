@@ -395,7 +395,7 @@ exports.getGradeBoard = async (req, res) => {
 async function GetGradeBoardInfor(classId) {
   const gradeStructureList =
     await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
-  // //get average point
+  //get average point
   const averagePoint = await StudentClassServices.getAveragePointsOfOneClass(
     classId
   );
@@ -413,7 +413,7 @@ async function GetGradeBoardInfor(classId) {
       if (student.student_id == null) return;
       const el = {
         fullName: student.name,
-        ClassId: student.ClassId,
+        ClassId: classId,
         student_id: student.student_id,
       };
       // console.log({ el });
@@ -465,6 +465,7 @@ exports.getStudentGrade = async (req, res) => {
     classId,
     req.user.student_id
   );
+  console.log({ scores });
   let index = 0;
   await Promise.all(
     scores.map(async (element) => {

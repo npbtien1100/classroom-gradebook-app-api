@@ -8,21 +8,21 @@ function AddAveragePoint(result) {
   return [...result, { averagePoint: avg }];
 }
 exports.AddAveragePoint = AddAveragePoint;
-function MapGrade(rawGrades, AllGradeCompositions, student_id) {
+function MapGrade(rawGrades, AllGradeCompositions) {
+  console.log({ rawGrades, AllGradeCompositions });
   const len = AllGradeCompositions.length;
+  const len1 = rawGrades.length;
 
-  for (let i = 0; i < len; i++) {
-    AllGradeCompositions[i].student_id = student_id;
-    const len1 = rawGrades.length;
-    for (let j = 0; j < len1; j++) {
-      AllGradeCompositions[i].id = rawGrades[j].id;
-      AllGradeCompositions[i].isFinalDecision = rawGrades[j].isFinalDecision;
+  for (let i = 0; i < len1; i++) {
+    for (let j = 0; j < len; j++) {
       if (
-        AllGradeCompositions[i].gradeStructure_id ==
-        rawGrades[j].gradeStructure_id
+        AllGradeCompositions[j].gradeStructure_id ==
+        rawGrades[i].gradeStructure_id
       ) {
-        AllGradeCompositions[i].grade = rawGrades[j].grade;
-        AllGradeCompositions[i].finalizedGrade = rawGrades[j].finalizedGrade;
+        AllGradeCompositions[j].id = rawGrades[i].id;
+        AllGradeCompositions[j].isFinalDecision = rawGrades[i].isFinalDecision;
+        AllGradeCompositions[j].grade = rawGrades[i].grade;
+        AllGradeCompositions[j].finalizedGrade = rawGrades[i].finalizedGrade;
         break;
       }
     }
@@ -30,24 +30,22 @@ function MapGrade(rawGrades, AllGradeCompositions, student_id) {
   return AllGradeCompositions;
 }
 exports.MapGrade = MapGrade;
-function CreateAllGradeCompositions(grade_structure_list, studentsClasses_id) {
+function CreateAllGradeCompositions(grade_structure_list, studentsClassesInfo) {
   const len = grade_structure_list.length;
   let result = [];
   for (let i = 0; i < len; i++) {
     let grade = {
-      studentsClasses_id: 0,
-      gradeStructure_id: 0,
+      studentsClasses_id: studentsClassesInfo.id,
+      gradeStructure_id: grade_structure_list[i].id,
       grade: null,
       finalizedGrade: null,
-      student_id: 0,
-      gradeTitle: "",
-      gradeDetail: 0,
+      student_id: studentsClassesInfo.student_id,
+      gradeTitle: grade_structure_list[i].gradeTitle,
+      gradeDetail: grade_structure_list[i].gradeDetail,
+      isFinalDecision: false,
       id: "",
     };
-    grade.studentsClasses_id = studentsClasses_id;
-    grade.gradeStructure_id = grade_structure_list[i].id;
-    grade.gradeTitle = grade_structure_list[i].gradeTitle;
-    grade.gradeDetail = grade_structure_list[i].gradeDetail;
+
     //console.log({ grade });
     result.push(grade);
   }

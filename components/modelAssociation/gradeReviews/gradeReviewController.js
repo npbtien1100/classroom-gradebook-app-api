@@ -15,12 +15,8 @@ exports.CreateNewRequestedReview = async (req, res) => {
       success: false,
       message: validated.error.details[0].message,
     });
-
-  //Role vs Authorization
-
   //Create a grade Review if it is not exist
   const result = await gradeReviewsServices.createGradeReview(data);
-
   res.json({ success: true, message: result });
 };
 
@@ -45,14 +41,14 @@ exports.GetOneGradeReview = async (req, res) => {
 exports.CreateOneComment = async (req, res) => {
   const data = req.body;
   data.userId = req.user.id;
-  console.log(data);
+  //console.log(data);
   const validated = gradeReviewCommentValidate(data);
   if (validated.error != null)
     return res.status(400).json({
       success: false,
       message: validated.error.details[0].message,
     });
-  const result = await gradeReviewsServices.createNewComment(data);
+  const result = await gradeReviewsServices.createNewComment(data, req);
   res.json(result);
 };
 

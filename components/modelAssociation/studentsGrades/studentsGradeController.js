@@ -30,13 +30,13 @@ module.exports.MakeOneGradeFinalize = async (req, res) => {
       message: validated.error.details[0].message,
     });
   //Make Finalize Grade
-  await GradeService.makeOneGradeFinalize(data);
+  const temp = await GradeService.makeOneGradeFinalize(data);
   //GET Class ID = ?
   const Subject = await StudentClassServices.getAveragePointsOfOneStudentGrades(
     data.gradeStructure_id
   );
 
-  res.json({ success: true, Subject });
+  res.json({ success: true, Subject, temp });
 };
 
 module.exports.MakeAllGradeFinalize = async (req, res) => {
@@ -64,4 +64,9 @@ module.exports.MakeAsFinalDecision = async (req, res) => {
   const result = await GradeService.MakeAsFinalDecision(data);
 
   res.send(result);
+};
+
+module.exports.ConfigDB = async (req, res) => {
+  const result = await GradeService.configDB();
+  res.json({ result });
 };

@@ -162,17 +162,21 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       "student_id",
       "gradeTitle",
       "gradeDetail",
-      "id",
       "isFinalDecision",
+      "ClassId",
+      "id",
     ];
+    //GET Student Infor
     let rawGrades = await StudentsClasses.findAll({
       include: {
         model: ClassGradeStructure,
       },
       where: {
         student_id: student_id,
+        classId: classId,
       },
       attributes: [
+        "ClassId",
         "classesGradeStructures.studentsGrades.id",
         "classesGradeStructures.studentsGrades.studentsClasses_id",
         "classesGradeStructures.studentsGrades.gradeStructure_id",
@@ -186,29 +190,33 @@ module.exports.getAllCompositionStudent = async (classId, student_id) => {
       raw: true,
     });
 
-    // return rawGrades;
     rawGrades = convertToResult(rawGrades, attributes);
-
-    const grade_structure_list =
-      await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
-
-    // const classId = rawGrades[0].studentsClasses_id;
-    const studentsClasses_id = await StudentsClasses.findOne({
+    //return rawGrades;
+    const studentsClassesInfo = await StudentsClasses.findOne({
       where: {
         student_id: student_id,
+        ClassId: classId,
       },
       raw: true,
     });
 
-    if (studentsClasses_id == null) return [];
+    if (studentsClassesInfo == null) return [];
+    //Grate structure
+    const grade_structure_list =
+      await ClassesGradeStructureServices.getAllClassGradeStructure(classId);
+
     //Create All grades composition
     const AllGradeCompositions = CreateAllGradeCompositions(
       grade_structure_list,
-      studentsClasses_id.id
+      studentsClassesInfo
     );
+
+    //Get student Infor
+
     //Map them
-    const finalResult = MapGrade(rawGrades, AllGradeCompositions, student_id);
-    //console.log(finalResult);
+    const finalResult = MapGrade(rawGrades, AllGradeCompositions);
+
+    // return finalResult;
     return finalResult;
   } catch (error) {
     console.log(error);
