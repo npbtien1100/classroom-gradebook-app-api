@@ -84,13 +84,13 @@ module.exports.makeOneGradeFinalize = async (data) => {
     console.log({ found });
     //Notify
     const foundClass = await classServices.getOneClassByClassID(
-      found[0].classesGradeStructures.ClassId
+      found[0].ClassId
     );
     const content = {
-      class_id: found[0].classesGradeStructures.ClassId,
+      class_id: found[0].ClassId,
       content:
         "Your " +
-        found[0].classesGradeStructures.gradeTitle +
+        found[0].gradeTitle +
         " grade has been finalized in " +
         foundClass.className,
     };
@@ -151,13 +151,13 @@ module.exports.MakeAsFinalDecision = async (data) => {
 
     //Notify
     const foundClass = await classServices.getOneClassByClassID(
-      found[0].classesGradeStructures.ClassId
+      found[0].ClassId
     );
     const content = {
-      class_id: found[0].classesGradeStructures.ClassId,
+      class_id: found[0].ClassId,
       content:
         "Your " +
-        found[0].classesGradeStructures.gradeTitle +
+        found[0].gradeTitle +
         " grade received a final decision in " +
         foundClass.className,
     };
