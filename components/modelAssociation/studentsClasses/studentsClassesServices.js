@@ -56,7 +56,7 @@ module.exports.getAveragePointsOfOneClass = async (classId) => {
         [
           Sequelize.fn(
             "avg",
-            Sequelize.col("studentsClasses.studentsgrades.finalizedGrade")
+            Sequelize.col("studentsclasses.studentsgrades.finalizedGrade")
           ),
           "averagePoint",
         ],
