@@ -472,6 +472,7 @@ exports.getStudentGrade = async (req, res) => {
       const gradeReview = await GradeReviewsServices.findOneByStudentGradeId(
         element.id
       );
+      if (gradeReview == null) return;
       for (let index = 0; index < scores.length; index++) {
         if (scores[index].id == gradeReview.studentGrade_Id)
           scores[index].gradeReview = gradeReview;
