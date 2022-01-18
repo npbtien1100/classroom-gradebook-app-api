@@ -80,7 +80,7 @@ module.exports.createGradeReview = async (data) => {
 
 module.exports.findOneByStudentGradeId = async (studentGrade_Id) => {
   try {
-    //console.log(studentGrade_Id);
+    console.log(studentGrade_Id);
     const gradeReview = await GradeReviews.findOne({
       where: {
         studentGrade_Id: studentGrade_Id,

@@ -466,15 +466,18 @@ exports.getStudentGrade = async (req, res) => {
     req.user.student_id
   );
   console.log({ scores });
-  let index = 0;
+
   await Promise.all(
     scores.map(async (element) => {
       const gradeReview = await GradeReviewsServices.findOneByStudentGradeId(
         element.id
       );
-      scores[index].gradeReview = gradeReview;
+      for (let index = 0; index < scores.length; index++) {
+        if (scores[index].id == gradeReview.studentGrade_Id)
+          scores[index].gradeReview = gradeReview;
+      }
       //console.log(element);
-      index++;
+
       return element;
     })
   );
