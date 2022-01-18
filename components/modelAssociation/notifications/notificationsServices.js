@@ -50,7 +50,7 @@ module.exports.CreateNotificationForTeacher = async (foundGrade, content) => {
             " - " +
             foundGrade.fullName +
             " requested grade review for " +
-            foundGrade.gradeTitle +
+            // foundGrade.gradeTitle +
             " in " +
             teacher.className,
         };

@@ -89,10 +89,9 @@ module.exports.makeOneGradeFinalize = async (data) => {
     const content = {
       class_id: found[0].ClassId,
       content:
-        "Your " +
-        found[0].gradeTitle +
-        " grade has been finalized in " +
-        foundClass.className,
+        // "Your " +
+        // found[0].gradeTitle +
+        " grade has been finalized in " + foundClass.className,
     };
     // console.log({ content });
     await NotificationServices.CreateNotificationByStudentId(
@@ -156,10 +155,9 @@ module.exports.MakeAsFinalDecision = async (data) => {
     const content = {
       class_id: found[0].ClassId,
       content:
-        "Your " +
-        found[0].gradeTitle +
-        " grade received a final decision in " +
-        foundClass.className,
+        // "Your " +
+        // found[0].gradeTitle +
+        " grade received a final decision in " + foundClass.className,
     };
     console.log({ content });
     await NotificationServices.CreateNotificationByStudentId(

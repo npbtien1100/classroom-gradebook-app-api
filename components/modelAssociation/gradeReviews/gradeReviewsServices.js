@@ -42,7 +42,7 @@ module.exports.createNewComment = async (data, req) => {
       class_id: found[0].ClassId,
       content:
         "You have a comment in :  " +
-        found[0].classesGradeStructures.gradeTitle +
+        // found[0].classesGradeStructures.gradeTitle +
         " in class " +
         foundClass.className,
     };
